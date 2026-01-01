@@ -1,4 +1,4 @@
-# Eloqoux
+# Eloquox
 
 A full-stack mobile application built with Expo (React Native), Express backend, Supabase, and Tailwind CSS.
 

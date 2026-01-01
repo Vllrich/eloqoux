@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Eloqoux API Server', status: 'running' });
+  res.json({ message: 'Eloquox API Server', status: 'running' });
 });
 
 app.get('/health', (req: Request, res: Response) => {

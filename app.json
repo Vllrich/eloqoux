@@ -1,16 +1,20 @@
 {
   "expo": {
-    "name": "eloqoux",
-    "slug": "eloqoux",
+    "name": "eloquox",
+    "slug": "eloquox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash-logo-dark.svg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fafaf6",
+      "dark": {
+        "image": "./assets/splash-logo-bright.svg",
+        "backgroundColor": "#121212"
+      }
     },
     "ios": {
       "supportsTablet": true

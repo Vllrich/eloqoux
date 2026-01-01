@@ -1,5 +1,5 @@
 {
-  "name": "eloqoux",
+  "name": "eloquox",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
@@ -33,6 +33,7 @@
     "express": "^5.2.1",
     "nodemon": "^3.1.11",
     "prettier-plugin-tailwindcss": "^0.5.14",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.19",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.2"

@@ -39,7 +39,7 @@ export default function App() {
         </TouchableOpacity>
 
         <Text className="text-xl font-bold" style={{ color: themeColors.text }}>
-          Welcome to Eloqoux!
+          Welcome to Eloquox!
         </Text>
         <Text className="mt-2" style={{ color: themeColors.textMuted }}>
           Open up App.tsx to start working on your app!
