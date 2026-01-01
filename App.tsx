@@ -3,6 +3,7 @@ import { View, useColorScheme } from "react-native";
 import { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "./global.css";
 import { getColors } from "./src/lib/colors";
 import { isOnboarded } from "./src/lib/storage";
@@ -59,11 +60,13 @@ export default function App() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-      <StatusBar style={isDark ? "light" : "dark"} />
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

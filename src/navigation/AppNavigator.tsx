@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../lib/colors';
 
 // Screens (to be created)
@@ -23,6 +24,7 @@ export default function AppNavigator() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -33,8 +35,8 @@ export default function AppNavigator() {
           borderTopColor: colors.border,
           borderTopWidth: 1,
           paddingTop: 8,
-          paddingBottom: 8,
-          height: 70,
+          paddingBottom: insets.bottom + 8,
+          height: 70 + insets.bottom,
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
