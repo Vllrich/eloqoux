@@ -1,57 +1,69 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View, TouchableOpacity, useColorScheme } from "react-native";
+import { View, useColorScheme } from "react-native";
 import { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "./global.css";
 import { getColors } from "./src/lib/colors";
+import { isOnboarded } from "./src/lib/storage";
+import WelcomeScreen from "./src/screens/WelcomeScreen";
+import CategorySelectionScreen from "./src/screens/CategorySelectionScreen";
+import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
   const systemColorScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemColorScheme === "dark");
-  const themeColors = getColors(isDark);
+  const isDark = systemColorScheme === "dark";
+  const colors = getColors(isDark);
+
+  const [loading, setLoading] = useState(true);
+  const [onboarding, setOnboarding] = useState<"welcome" | "categories" | "complete">("welcome");
 
   useEffect(() => {
-    setIsDark(systemColorScheme === "dark");
-  }, [systemColorScheme]);
+    checkOnboarding();
+  }, []);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
+  const checkOnboarding = async () => {
+    const isComplete = await isOnboarded();
+    setOnboarding(isComplete === true ? "complete" : "welcome");
+    setLoading(false);
   };
 
-  return (
-    <View
-      className={`flex-1 items-center justify-center ${isDark ? "dark" : ""}`}
-    >
-      <View
-        className="flex-1 w-full items-center justify-center"
-        style={{ backgroundColor: themeColors.bg }}
-      >
-        <TouchableOpacity
-          onPress={toggleTheme}
-          className="absolute top-16 right-6 rounded-full p-4 border"
-          style={{
-            backgroundColor: themeColors.surface,
-            borderColor: themeColors.border,
-          }}
-        >
-          <Text style={{ color: themeColors.text, fontSize: 24 }}>
-            {isDark ? "☀️" : "🌙"}
-          </Text>
-        </TouchableOpacity>
+  const handleWelcomeContinue = () => {
+    setOnboarding("categories");
+  };
 
-        <Text className="text-xl font-bold" style={{ color: themeColors.text }}>
-          Welcome to Eloquox!
-        </Text>
-        <Text className="mt-2" style={{ color: themeColors.textMuted }}>
-          Open up App.tsx to start working on your app!
-        </Text>
-        <TouchableOpacity
-          className="mt-6 px-6 py-3 rounded-lg"
-          style={{ backgroundColor: themeColors.accent }}
-        >
-          <Text className="text-white font-semibold">Get Started</Text>
-        </TouchableOpacity>
+  const handleCategoriesComplete = () => {
+    setOnboarding("complete");
+  };
+
+  if (loading) {
+    return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
+  }
+
+  if (onboarding === "welcome") {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <WelcomeScreen onContinue={handleWelcomeContinue} />
         <StatusBar style={isDark ? "light" : "dark"} />
-      </View>
-    </View>
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (onboarding === "categories") {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <CategorySelectionScreen onComplete={handleCategoriesComplete} />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </GestureHandlerRootView>
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+      <StatusBar style={isDark ? "light" : "dark"} />
+    </GestureHandlerRootView>
   );
 }

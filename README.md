@@ -1,115 +1,122 @@
 # Eloquox
 
-A full-stack mobile application built with Expo (React Native), Express backend, Supabase, and Tailwind CSS.
+An elegant app for training eloquence. Learn sophisticated words daily with AI-generated examples.
+
+## Features
+
+- **Daily Words**: Get a new eloquent word every day from your chosen categories
+- **9 Categories**: Technology, Politics & Society, Psychology, Environment, Languages, Gastronomy, Travel, Medicine, Business
+- **Smart Examples**: AI-generated example sentences with highlighted words
+- **History**: Track all words you've learned
+- **Overview**: See your weekly progress and category breakdown
+- **Search**: Find words across your entire learning history
+- **Minimalistic Design**: Clean, elegant interface with dark mode support
 
 ## Tech Stack
 
-- **Mobile**: Expo (React Native) + TypeScript
-- **Backend**: Node.js/Express + TypeScript
-- **Database**: Supabase
-- **Auth**: Supabase Auth
-- **Styling**: Tailwind CSS (NativeWind)
-
-## Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn
-- Expo CLI (installed globally or via npx)
-- Supabase account and project
+- **Frontend**: React Native (Expo), React Navigation, AsyncStorage
+- **Backend**: Express, OpenAI API with TOON format
+- **Styling**: NativeWind (Tailwind CSS)
 
 ## Setup
 
-### 1. Install Dependencies
+### Prerequisites
 
+- Node.js 18+
+- OpenAI API key
+- Expo CLI
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd eloquox
+```
+
+2. Install client dependencies:
 ```bash
 npm install
-cd server && npm install && cd ..
 ```
 
-### 2. Configure Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Supabase Configuration
-EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# Server Configuration
-PORT=3000
-
-# Supabase Service Role Key (for server-side operations)
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-```
-
-### 3. Run the Mobile App
-
+3. Install server dependencies:
 ```bash
-npm start
-# Then press 'i' for iOS or 'a' for Android
+cd server
+npm install
 ```
 
-### 4. Run the Backend Server
+4. Create server environment file:
+```bash
+cd server
+cp .env.example .env
+```
 
+5. Add your OpenAI API key to `server/.env`:
+```
+OPENAI_API_KEY=your_openai_api_key_here
+PORT=3000
+```
+
+### Running the App
+
+1. Start the backend server (in one terminal):
 ```bash
 npm run server:dev
 ```
 
-The server will run on `http://localhost:3000` by default.
-
-## Project Structure
-
-```
-.
-├── src/                 # Mobile app source code
-│   └── lib/
-│       └── supabase.ts  # Supabase client configuration
-├── server/              # Backend server
-│   ├── src/
-│   │   ├── index.ts     # Express server entry point
-│   │   └── lib/
-│   │       └── supabase.ts  # Server-side Supabase client
-│   └── package.json
-├── App.tsx              # Main app component
-├── global.css           # Tailwind CSS styles
-├── babel.config.js      # Babel configuration with NativeWind
-├── metro.config.js      # Metro bundler configuration
-├── tailwind.config.js   # Tailwind CSS configuration
-└── package.json         # Root package.json
-
+2. Start the Expo app (in another terminal):
+```bash
+npm start
 ```
 
-## Available Scripts
+3. Scan the QR code with Expo Go (iOS/Android) or press `w` for web
 
-### Mobile App
-- `npm start` - Start Expo development server
-- `npm run android` - Run on Android
-- `npm run ios` - Run on iOS
-- `npm run web` - Run on web
+## Usage
 
-### Backend Server
-- `npm run server:dev` - Start development server with hot reload
-- `npm run server:build` - Build TypeScript to JavaScript
-- `npm run server:start` - Start production server
+1. **First Launch**: 
+   - Welcome screen with logo and "say it better" slogan
+   - Select 1-3 categories of interest
 
-## Development
+2. **Daily Word Screen**:
+   - View the word, definition, and category
+   - Read example sentences (word is highlighted)
+   - Tap "Show More Examples" for additional AI-generated examples
+   - Actions: **Next** (save & get new word), **Skip** (skip without saving), **Change Topic** (pick different category)
 
-### Mobile Development
-The app uses NativeWind v4 for Tailwind CSS styling. Styles are applied using className props on React Native components.
+3. **History Tab**:
+   - Browse all words you've learned
+   - Tap any word to see full details and examples
 
-### Backend Development
-The Express server is located in the `server/` directory and uses TypeScript. The server automatically restarts on file changes when running in development mode.
+4. **Overview Tab**:
+   - See weekly word count
+   - View total words learned
+   - Category breakdown with visual bars
+   - Your selected interests
 
-## Supabase Setup
+5. **Search Tab**:
+   - Search across words, definitions, and examples
+   - Tap results to view full details
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Get your project URL and anon key from the project settings
-3. Add them to your `.env` file
-4. For server-side operations, use the service role key (keep it secure!)
+## TOON Format
+
+This app uses the [TOON format](https://github.com/toon-format/toon) for OpenAI API responses, which significantly reduces token usage compared to JSON while maintaining readability.
+
+Example TOON response:
+```toon
+word{term,category,definition,examples[3]{sentence,context}}:
+  eloquent,Languages and linguistics,"Fluent and persuasive",[
+    "She delivered an eloquent speech.",Standing ovation
+    "His eloquent defense convinced the jury.",Courtroom
+  ]
+```
+
+## Architecture
+
+- **Local Storage**: User preferences and word history stored with AsyncStorage
+- **Backend API**: Express server handles OpenAI requests
+- **Navigation**: Bottom tabs (History, Today, Overview, Search)
+- **Theming**: Global CSS variables with light/dark mode support
 
 ## License
 
-Private
-
-
+MIT
