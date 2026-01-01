@@ -41,7 +41,9 @@ Return ONLY the TOON formatted data, nothing else.`;
         content: prompt,
       },
     ],
-    temperature: 0.8,
+    temperature: 1.0,
+    top_p: 0.95,
+    seed: Date.now(),
   });
 
   const content = completion.choices[0]?.message?.content;
@@ -98,7 +100,9 @@ Return ONLY the TOON formatted data, nothing else.`;
         content: prompt,
       },
     ],
-    temperature: 0.8,
+    temperature: 1.0,
+    top_p: 0.95,
+    seed: Date.now(),
   });
 
   const content = completion.choices[0]?.message?.content;

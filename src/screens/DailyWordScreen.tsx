@@ -230,12 +230,9 @@ export default function DailyWordScreen() {
                 Examples
               </Text>
 
-              {word.examples.map((example) => (
+              {word.examples.map((example, idx) => (
                 <ExampleSentence
-                  key={
-                    (example as any)._key ||
-                    `${word.term}-${example.sentence}-${Math.random()}`
-                  }
+                  key={(example as any)._key || `${word.term}-${idx}`}
                   example={example}
                   word={word.term}
                   style={{ marginBottom: 16 }}
@@ -287,7 +284,6 @@ export default function DailyWordScreen() {
           borderTopColor: colors.border,
           paddingHorizontal: 24,
           paddingVertical: 20,
-          paddingBottom: 90,
         }}
       >
         <View style={{ flexDirection: "row", gap: 12 }}>
