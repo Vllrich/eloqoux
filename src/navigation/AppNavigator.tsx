@@ -9,13 +9,13 @@ import { getColors } from '../lib/colors';
 import DailyWordScreen from '../screens/DailyWordScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import OverviewScreen from '../screens/OverviewScreen';
-import SearchScreen from '../screens/SearchScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 export type RootTabParamList = {
   History: undefined;
   DailyWord: undefined;
   Overview: undefined;
-  Search: undefined;
+  Settings: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -76,11 +76,11 @@ export default function AppNavigator() {
         }}
       />
       <Tab.Screen
-        name="Search"
-        component={SearchScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <Ionicons name="search-outline" size={24} color={color} />
+            <Ionicons name="settings-outline" size={24} color={color} />
           ),
         }}
       />

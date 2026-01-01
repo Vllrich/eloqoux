@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   useColorScheme,
   Modal,
+  Alert,
 } from 'react-native';
 import { getColors } from '../lib/colors';
 import { Word } from '../types';
 import { getWordHistory } from '../lib/storage';
 import WordCard from '../components/WordCard';
 import ExampleSentence from '../components/ExampleSentence';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HistoryScreen() {
   const systemColorScheme = useColorScheme();
@@ -30,6 +32,28 @@ export default function HistoryScreen() {
     setHistory(data);
   };
 
+  const handleDeleteHistory = () => {
+    Alert.alert(
+      'Delete History',
+      'Are you sure you want to delete all history? This cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await AsyncStorage.setItem('@eloquox_word_history', JSON.stringify([]));
+            await AsyncStorage.setItem('@eloquox_weekly_stats', JSON.stringify([]));
+            setHistory([]);
+          },
+        },
+      ]
+    );
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -44,18 +68,36 @@ export default function HistoryScreen() {
           paddingBottom: 100,
         }}
       >
-        {/* Title */}
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: '300',
-            color: colors.text,
-            marginBottom: 8,
-            letterSpacing: 1,
-          }}
-        >
-          History
-        </Text>
+        {/* Title with Delete Button */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: '300',
+              color: colors.text,
+              letterSpacing: 1,
+            }}
+          >
+            History
+          </Text>
+          
+          {history.length > 0 && (
+            <TouchableOpacity
+              onPress={handleDeleteHistory}
+              style={{
+                backgroundColor: colors.border,
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderRadius: 12,
+                marginTop: 8,
+              }}
+            >
+              <Text style={{ fontSize: 11, color: colors.textMuted, fontWeight: '500' }}>
+                Delete
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         <Text
           style={{
