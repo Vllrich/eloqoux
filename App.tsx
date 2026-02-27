@@ -69,23 +69,23 @@ function AppContent() {
   }
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+    <NavigationContainer>
+      <AppNavigator />
       <StatusBar style={isDark ? "light" : "dark"} />
-    </SafeAreaProvider>
+    </NavigationContainer>
   );
 }
 
 export default function App() {
   return (
     <ErrorBoundary>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </GestureHandlerRootView>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }
