@@ -15,6 +15,7 @@ import { useIsFocused } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getColors } from "../../../shared/lib/colors";
+import { fonts } from "../../../shared/lib/typography";
 import { QuizCard } from "../../../shared/types";
 import { getDueQuizCards, updateQuizCard } from "../../../services/storage";
 
@@ -99,22 +100,23 @@ export default function QuizScreen() {
           paddingHorizontal: 40,
         }}
       >
-        <Text style={{ fontSize: 48, marginBottom: 16 }}>🧠</Text>
         {completed > 0 ? (
           <>
             <Text
               style={{
-                fontSize: 24,
-                fontWeight: "300",
+                fontFamily: fonts.serif,
+                fontSize: 28,
                 color: colors.text,
                 textAlign: "center",
-                marginBottom: 8,
+                marginBottom: 12,
               }}
             >
-              Session Complete!
+              Session Complete
             </Text>
+            <View style={{ width: 60, height: 1, backgroundColor: colors.accent + '40', marginBottom: 16 }} />
             <Text
               style={{
+                fontFamily: fonts.serifItalic,
                 fontSize: 16,
                 color: colors.textMuted,
                 textAlign: "center",
@@ -127,25 +129,26 @@ export default function QuizScreen() {
           <>
             <Text
               style={{
-                fontSize: 24,
-                fontWeight: "300",
+                fontFamily: fonts.serif,
+                fontSize: 28,
                 color: colors.text,
                 textAlign: "center",
-                marginBottom: 8,
+                marginBottom: 12,
               }}
             >
               No words to review
             </Text>
+            <View style={{ width: 60, height: 1, backgroundColor: colors.accent + '40', marginBottom: 16 }} />
             <Text
               style={{
+                fontFamily: fonts.serif,
                 fontSize: 16,
                 color: colors.textMuted,
                 textAlign: "center",
-                lineHeight: 24,
+                lineHeight: 26,
               }}
             >
-              Save words from the Today tab and they'll appear here for review
-              tomorrow.
+              Save words from the Today tab{"\n"}and they'll appear here for review.
             </Text>
           </>
         )}
@@ -164,28 +167,29 @@ export default function QuizScreen() {
       >
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 32,
-            fontWeight: "300",
             color: colors.text,
             marginBottom: 8,
-            letterSpacing: 1,
+            letterSpacing: -0.5,
           }}
         >
           Quiz
         </Text>
         <Text
           style={{
-            fontSize: 14,
+            fontFamily: fonts.sans,
+            fontSize: 13,
             color: colors.textMuted,
             marginBottom: 12,
           }}
         >
-          {currentIndex + 1} of {cards.length} · {completed} reviewed
+          {currentIndex + 1} of {cards.length}  ·  {completed} reviewed
         </Text>
-        <View style={{ height: 4, backgroundColor: colors.border, borderRadius: 2, marginBottom: 24 }}>
+        <View style={{ height: 3, backgroundColor: colors.border + '60', borderRadius: 2, marginBottom: 24 }}>
           <View
             style={{
-              height: 4,
+              height: 3,
               borderRadius: 2,
               backgroundColor: colors.accent,
               width: `${((currentIndex + (revealed ? 0.5 : 0)) / cards.length) * 100}%`,
@@ -200,9 +204,9 @@ export default function QuizScreen() {
                 frontAnimatedStyle,
                 {
                   backgroundColor: colors.surface,
-                  borderRadius: 16,
+                  borderRadius: 4,
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border + '80',
                   padding: 32,
                   minHeight: 280,
                   justifyContent: "center",
@@ -218,28 +222,29 @@ export default function QuizScreen() {
               >
                 <Text
                   style={{
-                    fontSize: 12,
-                    color: colors.textMuted,
-                    textTransform: "uppercase",
-                    letterSpacing: 1,
-                    marginBottom: 16,
+                    fontFamily: fonts.serifItalic,
+                    fontSize: 13,
+                    color: colors.accent,
+                    letterSpacing: 0.5,
+                    marginBottom: 20,
                   }}
                 >
                   {currentCard.category}
                 </Text>
                 <Text
                   style={{
-                    fontSize: 40,
-                    fontWeight: "300",
+                    fontFamily: fonts.serif,
+                    fontSize: 38,
                     color: colors.text,
                     textAlign: "center",
-                    marginBottom: 24,
+                    marginBottom: 28,
                   }}
                 >
                   {currentCard.term}
                 </Text>
                 <Text
                   style={{
+                    fontFamily: fonts.serifItalic,
                     fontSize: 14,
                     color: colors.textMuted,
                     textAlign: "center",
@@ -259,9 +264,9 @@ export default function QuizScreen() {
                   left: 0,
                   right: 0,
                   backgroundColor: colors.surface,
-                  borderRadius: 16,
+                  borderRadius: 4,
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border + '80',
                   padding: 32,
                   minHeight: 280,
                   justifyContent: "center",
@@ -270,19 +275,19 @@ export default function QuizScreen() {
             >
               <Text
                 style={{
-                  fontSize: 12,
-                  color: colors.textMuted,
-                  textTransform: "uppercase",
-                  letterSpacing: 1,
-                  marginBottom: 16,
+                  fontFamily: fonts.serifItalic,
+                  fontSize: 13,
+                  color: colors.accent,
+                  letterSpacing: 0.5,
+                  marginBottom: 20,
                 }}
               >
                 {currentCard.category}
               </Text>
               <Text
                 style={{
-                  fontSize: 32,
-                  fontWeight: "300",
+                  fontFamily: fonts.serif,
+                  fontSize: 30,
                   color: colors.text,
                   marginBottom: 16,
                 }}
@@ -291,7 +296,8 @@ export default function QuizScreen() {
               </Text>
               <Text
                 style={{
-                  fontSize: 18,
+                  fontFamily: fonts.serif,
+                  fontSize: 17,
                   color: colors.textMuted,
                   lineHeight: 28,
                   marginBottom: 20,
@@ -303,16 +309,20 @@ export default function QuizScreen() {
                 <View
                   style={{
                     backgroundColor: colors.bg,
-                    padding: 16,
-                    borderRadius: 10,
+                    paddingLeft: 16,
+                    paddingRight: 16,
+                    paddingVertical: 14,
+                    borderLeftWidth: 3,
+                    borderLeftColor: colors.accent + '40',
+                    borderRadius: 2,
                   }}
                 >
                   <Text
                     style={{
+                      fontFamily: fonts.serifItalic,
                       fontSize: 15,
                       color: colors.text,
                       lineHeight: 24,
-                      fontStyle: "italic",
                     }}
                   >
                     "{currentCard.examples[0].sentence}"
@@ -333,7 +343,7 @@ export default function QuizScreen() {
             right: 0,
             backgroundColor: colors.surface,
             borderTopWidth: 1,
-            borderTopColor: colors.border,
+            borderTopColor: colors.border + '80',
             paddingHorizontal: 24,
             paddingTop: 16,
             paddingBottom: insets.bottom + 16,
@@ -346,16 +356,16 @@ export default function QuizScreen() {
               accessibilityLabel="Review again, mark as incorrect"
               style={{
                 flex: 1,
-                backgroundColor: colors.surface,
+                backgroundColor: 'transparent',
                 paddingVertical: 16,
-                borderRadius: 8,
+                borderRadius: 4,
                 alignItems: "center",
                 borderWidth: 1,
-                borderColor: colors.error,
+                borderColor: colors.error + '60',
               }}
             >
               <Text
-                style={{ color: colors.error, fontSize: 14, fontWeight: "600" }}
+                style={{ color: colors.error, fontFamily: fonts.sansMedium, fontSize: 14 }}
               >
                 Review Again
               </Text>
@@ -369,12 +379,12 @@ export default function QuizScreen() {
                 flex: 1,
                 backgroundColor: colors.accent,
                 paddingVertical: 16,
-                borderRadius: 8,
+                borderRadius: 4,
                 alignItems: "center",
               }}
             >
               <Text
-                style={{ color: "#ffffff", fontSize: 14, fontWeight: "600" }}
+                style={{ color: "#ffffff", fontFamily: fonts.sansSemiBold, fontSize: 14 }}
               >
                 Got It
               </Text>

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated, useColorScheme } from 'react-native';
 import { getColors } from '../../../shared/lib/colors';
+import { fonts } from '../../../shared/lib/typography';
 
 interface WelcomeScreenProps {
   onContinue: () => void;
@@ -12,19 +13,19 @@ export default function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
   const colors = getColors(isDark);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 800,
+        duration: 1000,
         useNativeDriver: true,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
-        tension: 40,
-        friction: 7,
+        tension: 30,
+        friction: 8,
         useNativeDriver: true,
       }),
     ]).start();
@@ -47,15 +48,15 @@ export default function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
           alignItems: 'center',
         }}
       >
-        <Text style={{ fontSize: 72, marginBottom: 24 }}>💬</Text>
+        <View style={{ width: 80, height: 1, backgroundColor: colors.accent + '40', marginBottom: 40 }} />
 
         <Text
           style={{
-            fontSize: 48,
-            fontWeight: '300',
+            fontFamily: fonts.serif,
+            fontSize: 52,
             color: colors.text,
-            letterSpacing: 2,
-            marginBottom: 12,
+            letterSpacing: -0.5,
+            marginBottom: 16,
           }}
         >
           Eloquox
@@ -63,15 +64,17 @@ export default function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
 
         <Text
           style={{
-            fontSize: 18,
+            fontFamily: fonts.sansMedium,
+            fontSize: 13,
             color: colors.textMuted,
-            letterSpacing: 3,
+            letterSpacing: 4,
             textTransform: 'uppercase',
-            fontWeight: '300',
           }}
         >
           say it better
         </Text>
+
+        <View style={{ width: 80, height: 1, backgroundColor: colors.accent + '40', marginTop: 40 }} />
       </Animated.View>
 
       <Animated.View
@@ -88,16 +91,16 @@ export default function WelcomeScreen({ onContinue }: WelcomeScreenProps) {
           style={{
             backgroundColor: colors.accent,
             paddingVertical: 18,
-            borderRadius: 12,
+            borderRadius: 4,
             alignItems: 'center',
           }}
         >
           <Text
             style={{
               color: '#ffffff',
-              fontSize: 16,
-              fontWeight: '600',
-              letterSpacing: 1,
+              fontFamily: fonts.sansSemiBold,
+              fontSize: 15,
+              letterSpacing: 0.5,
             }}
           >
             Get Started

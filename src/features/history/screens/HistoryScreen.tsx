@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
+import { fonts } from '../../../shared/lib/typography';
 import { Word } from '../../../shared/types';
 import { getWordHistory, toggleFavorite } from '../../../services/storage';
 import WordDetailModal from '../../../shared/components/WordDetailModal';
@@ -101,28 +102,28 @@ export default function HistoryScreen() {
       style={{
         backgroundColor: colors.surface,
         padding: 20,
-        borderRadius: 12,
+        borderRadius: 4,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.border + '80',
         marginBottom: 12,
       }}
     >
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-            <Text style={{ fontSize: 24, fontWeight: '500', color: colors.text }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <Text style={{ fontFamily: fonts.serif, fontSize: 22, color: colors.text }}>
               {word.term}
             </Text>
-            {word.isFavorite && <Ionicons name="heart" size={16} color={colors.error} />}
+            {word.isFavorite && <Ionicons name="heart" size={14} color={colors.error} />}
           </View>
-          <Text style={{ fontSize: 14, color: colors.textMuted, marginBottom: 8 }}>
+          <Text style={{ fontFamily: fonts.serifItalic, fontSize: 13, color: colors.accent, marginBottom: 8 }}>
             {word.category}
           </Text>
-          <Text numberOfLines={2} style={{ fontSize: 14, color: colors.textMuted }}>
+          <Text numberOfLines={2} style={{ fontFamily: fonts.serif, fontSize: 14, color: colors.textMuted, lineHeight: 22 }}>
             {word.definition}
           </Text>
         </View>
-        <Text style={{ fontSize: 12, color: colors.textMuted, marginLeft: 12 }}>
+        <Text style={{ fontFamily: fonts.sans, fontSize: 11, color: colors.textMuted, marginLeft: 12 }}>
           {formatDate(word.dateViewed)}
         </Text>
       </View>
@@ -131,35 +132,35 @@ export default function HistoryScreen() {
 
   const ListHeader = useMemo(() => (
     <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: '300',
-            color: colors.text,
-            letterSpacing: 1,
-          }}
-        >
-          History
-        </Text>
-      </View>
+      <Text
+        style={{
+          fontFamily: fonts.serif,
+          fontSize: 32,
+          color: colors.text,
+          letterSpacing: -0.5,
+          marginBottom: 8,
+        }}
+      >
+        History
+      </Text>
 
       <Text
         style={{
-          fontSize: 16,
+          fontFamily: fonts.serifItalic,
+          fontSize: 15,
           color: colors.textMuted,
-          marginBottom: 16,
+          marginBottom: 20,
         }}
       >
-        {filteredHistory.length} words {filter === 'favorites' ? 'favorited' : 'learned'}
+        {filteredHistory.length} word{filteredHistory.length !== 1 ? 's' : ''} {filter === 'favorites' ? 'favorited' : 'collected'}
       </Text>
 
       <View
         style={{
           backgroundColor: colors.surface,
-          borderRadius: 10,
+          borderRadius: 4,
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: colors.border + '80',
           paddingHorizontal: 14,
           paddingVertical: 10,
           marginBottom: 12,
@@ -172,9 +173,9 @@ export default function HistoryScreen() {
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholder="Search words..."
+          placeholder="Search words…"
           placeholderTextColor={colors.textMuted}
-          style={{ flex: 1, fontSize: 15, color: colors.text, padding: 0 }}
+          style={{ flex: 1, fontFamily: fonts.sans, fontSize: 15, color: colors.text, padding: 0 }}
           autoCapitalize="none"
           autoCorrect={false}
           accessibilityLabel="Search words"
@@ -196,13 +197,13 @@ export default function HistoryScreen() {
             style={{
               paddingHorizontal: 16,
               paddingVertical: 8,
-              borderRadius: 20,
-              backgroundColor: filter === f ? colors.accent : colors.surface,
+              borderRadius: 4,
+              backgroundColor: filter === f ? colors.accent : 'transparent',
               borderWidth: 1,
               borderColor: filter === f ? colors.accent : colors.border,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '600', color: filter === f ? '#ffffff' : colors.text }}>
+            <Text style={{ fontFamily: fonts.sansMedium, fontSize: 13, color: filter === f ? '#ffffff' : colors.text }}>
               {f === 'all' ? 'All' : 'Favorites'}
             </Text>
           </TouchableOpacity>
@@ -217,12 +218,12 @@ export default function HistoryScreen() {
             style={{
               paddingHorizontal: 12,
               paddingVertical: 8,
-              borderRadius: 20,
+              borderRadius: 4,
               borderWidth: 1,
-              borderColor: colors.error,
+              borderColor: colors.error + '60',
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '600', color: colors.error }}>
+            <Text style={{ fontFamily: fonts.sansMedium, fontSize: 13, color: colors.error }}>
               Delete All
             </Text>
           </TouchableOpacity>
@@ -233,13 +234,13 @@ export default function HistoryScreen() {
 
   const ListEmpty = useMemo(() => (
     <View style={{ alignItems: 'center', marginTop: 80 }}>
-      <Text style={{ fontSize: 48, marginBottom: 16 }}>{filter === 'favorites' ? '❤️' : '📚'}</Text>
-      <Text style={{ fontSize: 16, color: colors.textMuted, textAlign: 'center' }}>
+      <Text style={{ fontFamily: fonts.serif, fontSize: 48, marginBottom: 16 }}>{filter === 'favorites' ? '♥' : '§'}</Text>
+      <Text style={{ fontFamily: fonts.serifItalic, fontSize: 16, color: colors.textMuted, textAlign: 'center', lineHeight: 26 }}>
         {filter === 'favorites'
-          ? 'No favorites yet.\nTap the heart on words you love.'
+          ? 'No favourites yet.\nTap the heart on words you love.'
           : searchQuery.length >= 2
             ? `No results for "${searchQuery}"`
-            : 'No words yet.\nStart learning to build your history.'}
+            : 'No words yet.\nStart learning to build your collection.'}
       </Text>
     </View>
   ), [colors, filter, searchQuery]);

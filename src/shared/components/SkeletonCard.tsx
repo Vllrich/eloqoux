@@ -23,28 +23,30 @@ export default function SkeletonCard() {
   return (
     <View style={{ paddingTop: 16 }}>
       <Animated.View style={{ opacity: pulse }}>
-        <View style={{ width: 100, height: 28, backgroundColor: skeletonColor, borderRadius: 6, marginBottom: 20 }} />
-        <View style={{ width: '70%', height: 48, backgroundColor: skeletonColor, borderRadius: 8, marginBottom: 20 }} />
-        <View style={{ width: '100%', height: 18, backgroundColor: skeletonColor, borderRadius: 4, marginBottom: 10 }} />
-        <View style={{ width: '85%', height: 18, backgroundColor: skeletonColor, borderRadius: 4, marginBottom: 10 }} />
-        <View style={{ width: '60%', height: 14, backgroundColor: skeletonColor, borderRadius: 4, marginBottom: 40 }} />
+        <View style={{ width: 120, height: 16, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 24 }} />
+        <View style={{ width: '65%', height: 44, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 24 }} />
+        <View style={{ width: '100%', height: 16, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 12 }} />
+        <View style={{ width: '85%', height: 16, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 12 }} />
+        <View style={{ width: '55%', height: 14, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 48 }} />
 
-        <View style={{ width: 80, height: 18, backgroundColor: skeletonColor, borderRadius: 4, marginBottom: 20 }} />
+        <View style={{ width: 80, height: 12, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 20 }} />
 
         {[1, 2, 3].map((i) => (
           <View
             key={i}
             style={{
               backgroundColor: colors.surface,
-              padding: 20,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: colors.border,
+              paddingLeft: 20,
+              paddingRight: 24,
+              paddingVertical: 20,
+              borderLeftWidth: 3,
+              borderLeftColor: skeletonColor,
+              borderRadius: 2,
               marginBottom: 16,
             }}
           >
-            <View style={{ width: '100%', height: 16, backgroundColor: skeletonColor, borderRadius: 4, marginBottom: 8 }} />
-            <View style={{ width: '75%', height: 16, backgroundColor: skeletonColor, borderRadius: 4 }} />
+            <View style={{ width: '100%', height: 16, backgroundColor: skeletonColor, borderRadius: 2, marginBottom: 10 }} />
+            <View style={{ width: '70%', height: 16, backgroundColor: skeletonColor, borderRadius: 2 }} />
           </View>
         ))}
       </Animated.View>

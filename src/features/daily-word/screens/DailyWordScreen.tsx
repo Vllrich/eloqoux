@@ -22,6 +22,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getColors } from "../../../shared/lib/colors";
+import { fonts } from "../../../shared/lib/typography";
 import { Word, WordExample } from "../../../shared/types";
 import {
   getUserPreferences,
@@ -211,18 +212,18 @@ export default function DailyWordScreen() {
       <Animated.View
         style={[
           saveIndicatorStyle,
-          { position: "absolute", top: insets.top + 20, right: 24, zIndex: 10, backgroundColor: colors.success, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
+          { position: "absolute", top: insets.top + 20, right: 24, zIndex: 10, backgroundColor: colors.success, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 4 },
         ]}
       >
-        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>SAVE</Text>
+        <Text style={{ color: "#fff", fontFamily: fonts.sansSemiBold, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase' }}>Save</Text>
       </Animated.View>
       <Animated.View
         style={[
           skipIndicatorStyle,
-          { position: "absolute", top: insets.top + 20, left: 24, zIndex: 10, backgroundColor: colors.error, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
+          { position: "absolute", top: insets.top + 20, left: 24, zIndex: 10, backgroundColor: colors.error, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 4 },
         ]}
       >
-        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>SKIP</Text>
+        <Text style={{ color: "#fff", fontFamily: fonts.sansSemiBold, fontSize: 13, letterSpacing: 2, textTransform: 'uppercase' }}>Skip</Text>
       </Animated.View>
 
       <GestureDetector gesture={swipeGesture}>
@@ -241,14 +242,15 @@ export default function DailyWordScreen() {
                   onToggleFavorite={handleToggleFavorite}
                 />
 
-                <View style={{ marginTop: 40 }}>
+                <View style={{ marginTop: 48 }}>
                   <Text
                     style={{
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: colors.text,
+                      fontFamily: fonts.sansMedium,
+                      fontSize: 11,
+                      color: colors.textMuted,
                       marginBottom: 20,
-                      letterSpacing: 0.5,
+                      letterSpacing: 2,
+                      textTransform: 'uppercase',
                     }}
                   >
                     Examples
@@ -267,20 +269,18 @@ export default function DailyWordScreen() {
                     onPress={loadMoreExamples}
                     disabled={loadingMore}
                     style={{
-                      backgroundColor: colors.surface,
-                      paddingVertical: 14,
-                      borderRadius: 8,
+                      paddingVertical: 16,
                       alignItems: "center",
-                      borderWidth: 1,
-                      borderColor: colors.border,
                       marginTop: 8,
+                      borderTopWidth: 1,
+                      borderTopColor: colors.border + '60',
                     }}
                   >
                     {loadingMore ? (
                       <ActivityIndicator color={colors.accent} />
                     ) : (
-                      <Text style={{ color: colors.accent, fontSize: 14, fontWeight: "600" }}>
-                        Show More Examples
+                      <Text style={{ color: colors.accent, fontFamily: fonts.serifItalic, fontSize: 15 }}>
+                        More examples…
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -299,7 +299,7 @@ export default function DailyWordScreen() {
           right: 0,
           backgroundColor: colors.surface,
           borderTopWidth: 1,
-          borderTopColor: colors.border,
+          borderTopColor: colors.border + '80',
           paddingHorizontal: 24,
           paddingTop: 16,
           paddingBottom: insets.bottom + 16,
@@ -312,15 +312,15 @@ export default function DailyWordScreen() {
             accessibilityLabel="Skip this word"
             style={{
               flex: 1,
-              backgroundColor: colors.surface,
+              backgroundColor: 'transparent',
               paddingVertical: 16,
-              borderRadius: 8,
+              borderRadius: 4,
               alignItems: "center",
               borderWidth: 1,
               borderColor: colors.border,
             }}
           >
-            <Text style={{ color: colors.text, fontSize: 14, fontWeight: "600" }}>Skip</Text>
+            <Text style={{ color: colors.textMuted, fontFamily: fonts.sansMedium, fontSize: 14, letterSpacing: 0.5 }}>Skip</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -331,11 +331,11 @@ export default function DailyWordScreen() {
               flex: 1,
               backgroundColor: colors.accent,
               paddingVertical: 16,
-              borderRadius: 8,
+              borderRadius: 4,
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "#ffffff", fontSize: 14, fontWeight: "600" }}>Save</Text>
+            <Text style={{ color: "#ffffff", fontFamily: fonts.sansSemiBold, fontSize: 14, letterSpacing: 0.5 }}>Save</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -344,15 +344,15 @@ export default function DailyWordScreen() {
             accessibilityLabel="Change topic category"
             style={{
               flex: 1,
-              backgroundColor: colors.surface,
+              backgroundColor: 'transparent',
               paddingVertical: 16,
-              borderRadius: 8,
+              borderRadius: 4,
               alignItems: "center",
               borderWidth: 1,
               borderColor: colors.border,
             }}
           >
-            <Text style={{ color: colors.text, fontSize: 14, fontWeight: "600" }}>Topic</Text>
+            <Text style={{ color: colors.textMuted, fontFamily: fonts.sansMedium, fontSize: 14, letterSpacing: 0.5 }}>Topic</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -367,27 +367,27 @@ export default function DailyWordScreen() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.75)",
+            backgroundColor: "rgba(26,23,20,0.85)",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 100,
           }}
         >
           <View style={{ alignItems: "center", paddingHorizontal: 40 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 40, marginBottom: 40 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 48, marginBottom: 40 }}>
               <View style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 40 }}>👈</Text>
-                <Text style={{ color: colors.error, fontSize: 18, fontWeight: "700", marginTop: 8 }}>Skip</Text>
+                <Text style={{ fontSize: 36 }}>←</Text>
+                <Text style={{ color: colors.error, fontFamily: fonts.sansSemiBold, fontSize: 14, letterSpacing: 2, textTransform: 'uppercase', marginTop: 8 }}>Skip</Text>
               </View>
               <View style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 40 }}>👉</Text>
-                <Text style={{ color: colors.success, fontSize: 18, fontWeight: "700", marginTop: 8 }}>Save</Text>
+                <Text style={{ fontSize: 36 }}>→</Text>
+                <Text style={{ color: colors.success, fontFamily: fonts.sansSemiBold, fontSize: 14, letterSpacing: 2, textTransform: 'uppercase', marginTop: 8 }}>Save</Text>
               </View>
             </View>
-            <Text style={{ color: "#fff", fontSize: 16, textAlign: "center", lineHeight: 24, marginBottom: 32 }}>
+            <Text style={{ color: '#e8e0d0', fontFamily: fonts.serif, fontSize: 17, textAlign: "center", lineHeight: 28, marginBottom: 32 }}>
               Swipe the card to save or skip.{"\n"}You can also use the buttons below.
             </Text>
-            <Text style={{ color: "rgba(255,255,255,0.5)", fontSize: 14 }}>Tap anywhere to dismiss</Text>
+            <Text style={{ color: "rgba(232,224,208,0.4)", fontFamily: fonts.serifItalic, fontSize: 14 }}>Tap anywhere to dismiss</Text>
           </View>
         </TouchableOpacity>
       )}
@@ -401,22 +401,22 @@ export default function DailyWordScreen() {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => setShowTopicPicker(false)}
-          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" }}
+          style={{ flex: 1, backgroundColor: "rgba(26,23,20,0.5)", justifyContent: "flex-end" }}
         >
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {}}
             style={{
               backgroundColor: colors.surface,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              paddingTop: 12,
+              borderTopLeftRadius: 4,
+              borderTopRightRadius: 4,
+              paddingTop: 16,
               paddingBottom: insets.bottom + 16,
               paddingHorizontal: 24,
             }}
           >
-            <View style={{ width: 36, height: 4, backgroundColor: colors.border, borderRadius: 2, alignSelf: "center", marginBottom: 20 }} />
-            <Text style={{ fontSize: 20, fontWeight: "600", color: colors.text, marginBottom: 20 }}>
+            <View style={{ width: 36, height: 3, backgroundColor: colors.border, borderRadius: 2, alignSelf: "center", marginBottom: 24 }} />
+            <Text style={{ fontFamily: fonts.serif, fontSize: 22, color: colors.text, marginBottom: 24 }}>
               Change Topic
             </Text>
             {availableCategories.map((cat) => (
@@ -425,19 +425,19 @@ export default function DailyWordScreen() {
                 onPress={() => selectTopic(cat)}
                 accessibilityRole="button"
                 style={{
-                  paddingVertical: 16,
+                  paddingVertical: 18,
                   borderBottomWidth: 1,
-                  borderBottomColor: colors.border,
+                  borderBottomColor: colors.border + '60',
                 }}
               >
-                <Text style={{ fontSize: 16, color: colors.text }}>{cat}</Text>
+                <Text style={{ fontFamily: fonts.serif, fontSize: 16, color: colors.text }}>{cat}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity
               onPress={() => setShowTopicPicker(false)}
-              style={{ marginTop: 16, paddingVertical: 14, alignItems: "center" }}
+              style={{ marginTop: 20, paddingVertical: 14, alignItems: "center" }}
             >
-              <Text style={{ fontSize: 16, color: colors.textMuted, fontWeight: "600" }}>Cancel</Text>
+              <Text style={{ fontFamily: fonts.sansMedium, fontSize: 15, color: colors.textMuted, letterSpacing: 0.5 }}>Cancel</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </TouchableOpacity>

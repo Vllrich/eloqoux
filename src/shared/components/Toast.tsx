@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Text, Animated, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../lib/colors';
+import { fonts } from '../lib/typography';
 
 interface ToastProps {
   message: string;
@@ -52,12 +53,12 @@ export default function Toast({ message, visible, type = 'info', onHide, duratio
         backgroundColor: bgColor,
         paddingHorizontal: 20,
         paddingVertical: 14,
-        borderRadius: 12,
+        borderRadius: 4,
         alignItems: 'center',
       }}
       pointerEvents="none"
     >
-      <Text style={{ color: '#fff', fontSize: 15, fontWeight: '600' }}>{message}</Text>
+      <Text style={{ color: '#fff', fontFamily: fonts.sansSemiBold, fontSize: 14, letterSpacing: 0.3 }}>{message}</Text>
     </Animated.View>
   );
 }

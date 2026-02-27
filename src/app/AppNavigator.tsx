@@ -4,6 +4,7 @@ import { useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../shared/lib/colors';
+import { fonts } from '../shared/lib/typography';
 
 import DailyWordScreen from '../features/daily-word/screens/DailyWordScreen';
 import HistoryScreen from '../features/history/screens/HistoryScreen';
@@ -34,7 +35,7 @@ export default function AppNavigator() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          borderTopColor: colors.border + '80',
           borderTopWidth: 1,
           paddingTop: 8,
           paddingBottom: insets.bottom + 8,
@@ -43,8 +44,9 @@ export default function AppNavigator() {
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
+          fontFamily: fonts.sansMedium,
           fontSize: 10,
-          fontWeight: '500',
+          letterSpacing: 0.5,
           marginTop: 4,
         },
       }}

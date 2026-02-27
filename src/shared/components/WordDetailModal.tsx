@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../lib/colors';
+import { fonts } from '../lib/typography';
 import { Word } from '../types';
 import WordCard from './WordCard';
 import ExampleSentence from './ExampleSentence';
@@ -46,14 +47,15 @@ export default function WordDetailModal({ word, onClose, onToggleFavorite }: Wor
                 showFavorite={!!onToggleFavorite}
               />
 
-              <View style={{ marginTop: 40 }}>
+              <View style={{ marginTop: 48 }}>
                 <Text
                   style={{
-                    fontSize: 18,
-                    fontWeight: '600',
-                    color: colors.text,
+                    fontFamily: fonts.sansMedium,
+                    fontSize: 11,
+                    color: colors.textMuted,
                     marginBottom: 20,
-                    letterSpacing: 0.5,
+                    letterSpacing: 2,
+                    textTransform: 'uppercase',
                   }}
                 >
                   Examples
@@ -80,7 +82,7 @@ export default function WordDetailModal({ word, onClose, onToggleFavorite }: Wor
             right: 0,
             backgroundColor: colors.surface,
             borderTopWidth: 1,
-            borderTopColor: colors.border,
+            borderTopColor: colors.border + '80',
             paddingHorizontal: 24,
             paddingTop: 16,
             paddingBottom: insets.bottom + 16,
@@ -93,11 +95,11 @@ export default function WordDetailModal({ word, onClose, onToggleFavorite }: Wor
             style={{
               backgroundColor: colors.accent,
               paddingVertical: 16,
-              borderRadius: 8,
+              borderRadius: 4,
               alignItems: 'center',
             }}
           >
-            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600' }}>
+            <Text style={{ color: '#ffffff', fontFamily: fonts.sansSemiBold, fontSize: 15, letterSpacing: 0.5 }}>
               Close
             </Text>
           </TouchableOpacity>

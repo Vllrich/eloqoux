@@ -3,6 +3,7 @@ import { View, Text, ScrollView, useColorScheme, RefreshControl } from 'react-na
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
+import { fonts } from '../../../shared/lib/typography';
 import { getCurrentWeekStats, getWordHistory, getUserPreferences, getStreak, getMilestones, checkMilestones } from '../../../services/storage';
 import { Category, StreakData, Milestone } from '../../../shared/types';
 import StatsCard from '../../../shared/components/StatsCard';
@@ -76,11 +77,11 @@ export default function OverviewScreen() {
       >
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 32,
-            fontWeight: '300',
             color: colors.text,
             marginBottom: 8,
-            letterSpacing: 1,
+            letterSpacing: -0.5,
           }}
         >
           Overview
@@ -88,7 +89,8 @@ export default function OverviewScreen() {
 
         <Text
           style={{
-            fontSize: 16,
+            fontFamily: fonts.serifItalic,
+            fontSize: 15,
             color: colors.textMuted,
             marginBottom: 40,
           }}
@@ -101,33 +103,33 @@ export default function OverviewScreen() {
             style={{
               backgroundColor: colors.surface,
               padding: 24,
-              borderRadius: 12,
+              borderRadius: 4,
               borderWidth: 1,
-              borderColor: colors.border,
+              borderColor: colors.border + '80',
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}
           >
             <View>
-              <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+              <Text style={{ fontFamily: fonts.sansMedium, fontSize: 11, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10 }}>
                 Current Streak
               </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
-                <Text style={{ fontSize: 48, fontWeight: '300', color: colors.accent }}>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
+                <Text style={{ fontFamily: fonts.serif, fontSize: 44, color: colors.accent }}>
                   {streak.currentStreak}
                 </Text>
-                <Text style={{ fontSize: 16, color: colors.textMuted }}>days</Text>
+                <Text style={{ fontFamily: fonts.serifItalic, fontSize: 15, color: colors.textMuted }}>days</Text>
               </View>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+              <Text style={{ fontFamily: fonts.sansMedium, fontSize: 11, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10 }}>
                 Best
               </Text>
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
-                <Text style={{ fontSize: 32, fontWeight: '300', color: colors.text }}>
+                <Text style={{ fontFamily: fonts.serif, fontSize: 32, color: colors.text }}>
                   {streak.longestStreak}
                 </Text>
-                <Text style={{ fontSize: 14, color: colors.textMuted }}>days</Text>
+                <Text style={{ fontFamily: fonts.serifItalic, fontSize: 14, color: colors.textMuted }}>days</Text>
               </View>
             </View>
           </View>
@@ -142,41 +144,41 @@ export default function OverviewScreen() {
           <StatsCard
             title="Total"
             value={totalCount}
-            subtitle="words in history"
+            subtitle="words in collection"
           />
 
           <View
             style={{
               backgroundColor: colors.surface,
               padding: 24,
-              borderRadius: 12,
+              borderRadius: 4,
               borderWidth: 1,
-              borderColor: colors.border,
+              borderColor: colors.border + '80',
             }}
           >
-            <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+            <Text style={{ fontFamily: fonts.sansMedium, fontSize: 11, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 20 }}>
               Milestones
             </Text>
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: 16 }}>
               {milestones.map((m) => {
                 const value = m.type === 'words' ? totalCount : streak.currentStreak;
                 const progress = Math.min(value / m.threshold, 1);
                 return (
                   <View key={m.id}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-                      <Text style={{ fontSize: 14, color: m.achieved ? colors.accent : colors.text, fontWeight: m.achieved ? '600' : '400' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <Text style={{ fontFamily: m.achieved ? fonts.serifBold : fonts.serif, fontSize: 14, color: m.achieved ? colors.accent : colors.text }}>
                         {m.achieved ? '✓ ' : ''}{m.title}
                       </Text>
-                      <Text style={{ fontSize: 12, color: colors.textMuted }}>
-                        {Math.min(value, m.threshold)}/{m.threshold} {m.type === 'words' ? 'words' : 'days'}
+                      <Text style={{ fontFamily: fonts.sans, fontSize: 12, color: colors.textMuted }}>
+                        {Math.min(value, m.threshold)}/{m.threshold}
                       </Text>
                     </View>
-                    <View style={{ height: 6, backgroundColor: colors.border, borderRadius: 3 }}>
+                    <View style={{ height: 4, backgroundColor: colors.border + '60', borderRadius: 2 }}>
                       <View
                         style={{
-                          height: 6,
-                          borderRadius: 3,
-                          backgroundColor: m.achieved ? colors.accent : colors.textMuted,
+                          height: 4,
+                          borderRadius: 2,
+                          backgroundColor: m.achieved ? colors.accent : colors.textMuted + '60',
                           width: `${progress * 100}%`,
                         }}
                       />
@@ -191,46 +193,47 @@ export default function OverviewScreen() {
             style={{
               backgroundColor: colors.surface,
               padding: 24,
-              borderRadius: 12,
+              borderRadius: 4,
               borderWidth: 1,
-              borderColor: colors.border,
+              borderColor: colors.border + '80',
             }}
           >
             <Text
               style={{
-                fontSize: 14,
+                fontFamily: fonts.sansMedium,
+                fontSize: 11,
                 color: colors.textMuted,
                 textTransform: 'uppercase',
-                letterSpacing: 1,
-                marginBottom: 16,
+                letterSpacing: 2,
+                marginBottom: 20,
               }}
             >
               By Category
             </Text>
 
             {Object.keys(categoryBreakdown).length === 0 ? (
-              <Text style={{ fontSize: 14, color: colors.textMuted }}>
+              <Text style={{ fontFamily: fonts.serifItalic, fontSize: 14, color: colors.textMuted }}>
                 No data yet
               </Text>
             ) : (
-              <View style={{ gap: 12 }}>
+              <View style={{ gap: 14 }}>
                 {Object.entries(categoryBreakdown)
                   .sort(([, a], [, b]) => b - a)
                   .map(([category, count]) => (
                     <View key={category} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Text style={{ fontSize: 16, color: colors.text, flex: 1 }}>
+                      <Text style={{ fontFamily: fonts.serif, fontSize: 15, color: colors.text, flex: 1 }}>
                         {category}
                       </Text>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                         <View
                           style={{
                             backgroundColor: colors.accent,
-                            height: 8,
-                            borderRadius: 4,
+                            height: 6,
+                            borderRadius: 3,
                             width: Math.max(40, (count / totalCount) * 120),
                           }}
                         />
-                        <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text, width: 30, textAlign: 'right' }}>
+                        <Text style={{ fontFamily: fonts.sansMedium, fontSize: 15, color: colors.text, width: 30, textAlign: 'right' }}>
                           {count}
                         </Text>
                       </View>
@@ -244,27 +247,28 @@ export default function OverviewScreen() {
             style={{
               backgroundColor: colors.surface,
               padding: 24,
-              borderRadius: 12,
+              borderRadius: 4,
               borderWidth: 1,
-              borderColor: colors.border,
+              borderColor: colors.border + '80',
             }}
           >
             <Text
               style={{
-                fontSize: 14,
+                fontFamily: fonts.sansMedium,
+                fontSize: 11,
                 color: colors.textMuted,
                 textTransform: 'uppercase',
-                letterSpacing: 1,
-                marginBottom: 16,
+                letterSpacing: 2,
+                marginBottom: 20,
               }}
             >
               Your Interests
             </Text>
 
-            <View style={{ gap: 8 }}>
+            <View style={{ gap: 10 }}>
               {selectedCategories.map((cat) => (
-                <Text key={cat} style={{ fontSize: 16, color: colors.text }}>
-                  • {cat}
+                <Text key={cat} style={{ fontFamily: fonts.serif, fontSize: 16, color: colors.text }}>
+                  · {cat}
                 </Text>
               ))}
             </View>

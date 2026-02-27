@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, useColorScheme, ViewStyle } from 'react-native';
 import { getColors } from '../lib/colors';
+import { fonts } from '../lib/typography';
 import { WordExample } from '../types';
 
 interface ExampleSentenceProps {
@@ -21,7 +22,7 @@ export default function ExampleSentence({ example, word, style }: ExampleSentenc
     const index = lowerSentence.indexOf(lowerWord);
 
     if (index === -1) {
-      return <Text style={{ color: colors.text }}>{sentence}</Text>;
+      return <Text style={{ fontFamily: fonts.serif, color: colors.text }}>{sentence}</Text>;
     }
 
     const before = sentence.substring(0, index);
@@ -29,9 +30,9 @@ export default function ExampleSentence({ example, word, style }: ExampleSentenc
     const after = sentence.substring(index + word.length);
 
     return (
-      <Text style={{ color: colors.text, fontSize: 16, lineHeight: 26 }}>
+      <Text style={{ fontFamily: fonts.serif, color: colors.text, fontSize: 17, lineHeight: 30 }}>
         {before}
-        <Text style={{ color: colors.accent, fontWeight: '600' }}>{highlighted}</Text>
+        <Text style={{ color: colors.accent, fontFamily: fonts.serifBold }}>{highlighted}</Text>
         {after}
       </Text>
     );
@@ -42,10 +43,12 @@ export default function ExampleSentence({ example, word, style }: ExampleSentenc
       style={[
         {
           backgroundColor: colors.surface,
-          padding: 20,
-          borderRadius: 12,
-          borderWidth: 1,
-          borderColor: colors.border,
+          paddingLeft: 20,
+          paddingRight: 24,
+          paddingVertical: 20,
+          borderLeftWidth: 3,
+          borderLeftColor: colors.accent + '50',
+          borderRadius: 2,
         },
         style,
       ]}
@@ -55,10 +58,10 @@ export default function ExampleSentence({ example, word, style }: ExampleSentenc
       {example.context && (
         <Text
           style={{
+            fontFamily: fonts.serifItalic,
             fontSize: 14,
             color: colors.textMuted,
-            marginTop: 12,
-            fontStyle: 'italic',
+            marginTop: 14,
           }}
         >
           — {example.context}

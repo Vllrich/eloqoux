@@ -11,6 +11,7 @@ import {
 import * as Notifications from 'expo-notifications';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
+import { fonts } from '../../../shared/lib/typography';
 import { getUserPreferences, saveUserPreferences, clearAllData } from '../../../services/storage';
 import { useAuth } from '../../../app/AuthContext';
 
@@ -135,35 +136,35 @@ export default function SettingsScreen() {
       >
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 32,
-            fontWeight: '300',
             color: colors.text,
             marginBottom: 8,
-            letterSpacing: 1,
+            letterSpacing: -0.5,
           }}
         >
           Settings
         </Text>
-        <Text style={{ fontSize: 16, color: colors.textMuted, marginBottom: 40 }}>
+        <Text style={{ fontFamily: fonts.serifItalic, fontSize: 15, color: colors.textMuted, marginBottom: 40 }}>
           Customize your experience
         </Text>
 
         <View
           style={{
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderRadius: 4,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.border + '80',
             padding: 20,
             marginBottom: 16,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+          <Text style={{ fontFamily: fonts.sansMedium, fontSize: 11, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 }}>
             Daily Reminder
           </Text>
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Text style={{ fontSize: 16, color: colors.text }}>Enable notifications</Text>
+            <Text style={{ fontFamily: fonts.serif, fontSize: 16, color: colors.text }}>Enable notifications</Text>
             <Switch
               value={notificationsEnabled}
               onValueChange={handleToggleNotifications}
@@ -174,12 +175,12 @@ export default function SettingsScreen() {
 
           {notificationsEnabled && (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, color: colors.text }}>Reminder time</Text>
+              <Text style={{ fontFamily: fonts.serif, fontSize: 16, color: colors.text }}>Reminder time</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <TouchableOpacity onPress={() => cycleHour(-1)}>
                   <Text style={{ fontSize: 20, color: colors.accent }}>−</Text>
                 </TouchableOpacity>
-                <Text style={{ fontSize: 16, color: colors.text, fontWeight: '600', minWidth: 80, textAlign: 'center' }}>
+                <Text style={{ fontFamily: fonts.sansMedium, fontSize: 16, color: colors.text, minWidth: 80, textAlign: 'center' }}>
                   {formatHour(notifHour)}
                 </Text>
                 <TouchableOpacity onPress={() => cycleHour(1)}>
@@ -193,33 +194,33 @@ export default function SettingsScreen() {
         <View
           style={{
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderRadius: 4,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.border + '80',
             padding: 20,
             marginBottom: 16,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+          <Text style={{ fontFamily: fonts.sansMedium, fontSize: 11, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 }}>
             Account
           </Text>
-          <Text style={{ fontSize: 16, color: colors.text, marginBottom: 8 }}>
+          <Text style={{ fontFamily: fonts.serif, fontSize: 16, color: colors.text, marginBottom: 10 }}>
             {user?.email}
           </Text>
           <View
             style={{
-              backgroundColor: trialActive ? (profile?.is_subscribed ? colors.successBg : colors.accent + '20') : colors.errorBg,
+              backgroundColor: trialActive ? (profile?.is_subscribed ? colors.successBg : colors.accent + '18') : colors.errorBg,
               paddingVertical: 8,
               paddingHorizontal: 14,
-              borderRadius: 8,
+              borderRadius: 4,
               alignSelf: 'flex-start',
               marginBottom: 4,
             }}
           >
             <Text
               style={{
+                fontFamily: fonts.sansMedium,
                 fontSize: 13,
-                fontWeight: '600',
                 color: trialActive ? (profile?.is_subscribed ? colors.success : colors.accent) : colors.error,
               }}
             >
@@ -235,29 +236,29 @@ export default function SettingsScreen() {
         <View
           style={{
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderRadius: 4,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.border + '80',
             padding: 20,
             marginTop: 8,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+          <Text style={{ fontFamily: fonts.sansMedium, fontSize: 11, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 16 }}>
             Data
           </Text>
           <TouchableOpacity
             onPress={handleClearData}
             style={{
-              backgroundColor: colors.bg,
+              backgroundColor: 'transparent',
               paddingVertical: 14,
-              borderRadius: 8,
+              borderRadius: 4,
               alignItems: 'center',
               borderWidth: 1,
-              borderColor: colors.error,
+              borderColor: colors.error + '50',
               marginBottom: 12,
             }}
           >
-            <Text style={{ color: colors.error, fontSize: 14, fontWeight: '600' }}>
+            <Text style={{ color: colors.error, fontFamily: fonts.sansMedium, fontSize: 14 }}>
               Clear All Data
             </Text>
           </TouchableOpacity>
@@ -269,15 +270,15 @@ export default function SettingsScreen() {
               ])
             }
             style={{
-              backgroundColor: colors.bg,
+              backgroundColor: 'transparent',
               paddingVertical: 14,
-              borderRadius: 8,
+              borderRadius: 4,
               alignItems: 'center',
               borderWidth: 1,
               borderColor: colors.border,
             }}
           >
-            <Text style={{ color: colors.text, fontSize: 14, fontWeight: '600' }}>
+            <Text style={{ color: colors.text, fontFamily: fonts.sansMedium, fontSize: 14 }}>
               Sign Out
             </Text>
           </TouchableOpacity>

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
+import { fonts } from '../../../shared/lib/typography';
 import { Category } from '../../../shared/types';
 import { saveUserPreferences } from '../../../services/storage';
 
@@ -76,11 +77,11 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
       >
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 32,
-            fontWeight: '300',
             color: colors.text,
             marginBottom: 12,
-            letterSpacing: 1,
+            letterSpacing: -0.5,
           }}
         >
           Choose Your Interests
@@ -88,13 +89,14 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
 
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 16,
             color: colors.textMuted,
             marginBottom: 40,
-            lineHeight: 24,
+            lineHeight: 26,
           }}
         >
-          Select 1-3 categories to personalize your word suggestions
+          Select 1–3 categories to personalize your word suggestions
         </Text>
 
         <View style={{ gap: 12 }}>
@@ -108,16 +110,16 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
                   backgroundColor: isSelected ? colors.accent : colors.surface,
                   paddingVertical: 20,
                   paddingHorizontal: 24,
-                  borderRadius: 12,
+                  borderRadius: 4,
                   borderWidth: 1,
-                  borderColor: isSelected ? colors.accent : colors.border,
+                  borderColor: isSelected ? colors.accent : colors.border + '80',
                 }}
               >
                 <Text
                   style={{
+                    fontFamily: isSelected ? fonts.sansSemiBold : fonts.serif,
                     fontSize: 16,
                     color: isSelected ? '#ffffff' : colors.text,
-                    fontWeight: isSelected ? '600' : '400',
                   }}
                 >
                   {category}
@@ -136,7 +138,7 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
           right: 0,
           backgroundColor: colors.surface,
           borderTopWidth: 1,
-          borderTopColor: colors.border,
+          borderTopColor: colors.border + '80',
           paddingHorizontal: 24,
           paddingTop: 16,
           paddingBottom: insets.bottom + 16,
@@ -144,6 +146,7 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
       >
         <Text
           style={{
+            fontFamily: fonts.serifItalic,
             fontSize: 14,
             color: colors.textMuted,
             marginBottom: 12,
@@ -159,16 +162,16 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
           style={{
             backgroundColor: selectedCategories.length > 0 ? colors.accent : colors.border,
             paddingVertical: 18,
-            borderRadius: 12,
+            borderRadius: 4,
             alignItems: 'center',
           }}
         >
           <Text
             style={{
               color: '#ffffff',
-              fontSize: 16,
-              fontWeight: '600',
-              letterSpacing: 1,
+              fontFamily: fonts.sansSemiBold,
+              fontSize: 15,
+              letterSpacing: 0.5,
             }}
           >
             Continue

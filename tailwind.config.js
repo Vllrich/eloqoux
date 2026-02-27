@@ -11,30 +11,38 @@ module.exports = {
     extend: {
       colors: {
         bg: {
-          DEFAULT: '#fafaf6',
-          dark: '#121212',
+          DEFAULT: '#f4ede4',
+          dark: '#1a1714',
         },
         surface: {
-          DEFAULT: '#ffffff',
-          dark: '#161616',
+          DEFAULT: '#fffdf7',
+          dark: '#242018',
         },
         text: {
-          DEFAULT: '#121212',
-          muted: '#444444',
-          'muted-dark': '#b8b8b8',
-          dark: '#ededed',
+          DEFAULT: '#2c2418',
+          muted: '#7a6e5d',
+          'muted-dark': '#9a8e7e',
+          dark: '#e8e0d0',
         },
         border: {
-          DEFAULT: '#e6e6e0',
-          dark: '#2a2a2a',
+          DEFAULT: '#d9cdb8',
+          dark: '#3a3228',
         },
         accent: {
-          DEFAULT: '#2f6fed',
-          dark: '#d9b827',
+          DEFAULT: '#8b6914',
+          dark: '#c9a84c',
         },
+      },
+      fontFamily: {
+        serif: ['LibreBaskerville_400Regular', 'Georgia', 'serif'],
+        'serif-bold': ['LibreBaskerville_700Bold', 'Georgia', 'serif'],
+        'serif-italic': ['LibreBaskerville_400Regular_Italic', 'Georgia', 'serif'],
+        sans: ['Inter_400Regular', 'system-ui', 'sans-serif'],
+        'sans-medium': ['Inter_500Medium', 'system-ui', 'sans-serif'],
+        'sans-semibold': ['Inter_600SemiBold', 'system-ui', 'sans-serif'],
+        'sans-bold': ['Inter_700Bold', 'system-ui', 'sans-serif'],
       },
     },
   },
   plugins: [],
 }
-

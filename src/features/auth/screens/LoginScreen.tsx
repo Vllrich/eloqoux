@@ -11,6 +11,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { getColors } from '../../../shared/lib/colors';
+import { fonts } from '../../../shared/lib/typography';
 import { useAuth } from '../../../app/AuthContext';
 
 export default function LoginScreen() {
@@ -86,11 +87,11 @@ export default function LoginScreen() {
         <Text style={{ fontSize: 56, textAlign: 'center', marginBottom: 24 }}>✉️</Text>
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 28,
-            fontWeight: '300',
             color: colors.text,
             textAlign: 'center',
-            letterSpacing: 1,
+            letterSpacing: -0.5,
             marginBottom: 12,
           }}
         >
@@ -98,15 +99,16 @@ export default function LoginScreen() {
         </Text>
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 16,
             color: colors.textMuted,
             textAlign: 'center',
-            lineHeight: 24,
+            lineHeight: 26,
             marginBottom: 32,
           }}
         >
           We sent a confirmation link to{'\n'}
-          <Text style={{ color: colors.text, fontWeight: '600' }}>{email}</Text>
+          <Text style={{ color: colors.text, fontFamily: fonts.serifBold }}>{email}</Text>
           {'\n\n'}Click the link in your email, then come back here.
         </Text>
 
@@ -114,6 +116,7 @@ export default function LoginScreen() {
           <Text
             style={{
               color: colors.error,
+              fontFamily: fonts.sans,
               fontSize: 14,
               textAlign: 'center',
               marginBottom: 16,
@@ -129,7 +132,7 @@ export default function LoginScreen() {
           style={{
             backgroundColor: colors.accent,
             paddingVertical: 18,
-            borderRadius: 12,
+            borderRadius: 4,
             alignItems: 'center',
             marginBottom: 12,
             opacity: loading ? 0.7 : 1,
@@ -138,7 +141,7 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600', letterSpacing: 1 }}>
+            <Text style={{ color: '#ffffff', fontFamily: fonts.sansSemiBold, fontSize: 15, letterSpacing: 0.5 }}>
               I've Confirmed My Email
             </Text>
           )}
@@ -153,7 +156,7 @@ export default function LoginScreen() {
           }}
           style={{ alignItems: 'center', paddingVertical: 12 }}
         >
-          <Text style={{ color: colors.textMuted, fontSize: 14 }}>
+          <Text style={{ color: colors.textMuted, fontFamily: fonts.sans, fontSize: 14 }}>
             Use a different account
           </Text>
         </TouchableOpacity>
@@ -176,10 +179,10 @@ export default function LoginScreen() {
       >
         <Text
           style={{
+            fontFamily: fonts.serif,
             fontSize: 48,
-            fontWeight: '300',
             color: colors.text,
-            letterSpacing: 2,
+            letterSpacing: -0.5,
             textAlign: 'center',
             marginBottom: 8,
           }}
@@ -188,15 +191,16 @@ export default function LoginScreen() {
         </Text>
         <Text
           style={{
-            fontSize: 14,
+            fontFamily: fonts.sansMedium,
+            fontSize: 12,
             color: colors.textMuted,
             textAlign: 'center',
-            letterSpacing: 2,
+            letterSpacing: 3,
             textTransform: 'uppercase',
             marginBottom: 48,
           }}
         >
-          {mode === 'login' ? 'Welcome back' : 'Start your 14-day free trial'}
+          {mode === 'login' ? 'Welcome back' : 'Begin your journey'}
         </Text>
 
         <TextInput
@@ -211,9 +215,10 @@ export default function LoginScreen() {
             backgroundColor: colors.surface,
             borderWidth: 1,
             borderColor: colors.border,
-            borderRadius: 12,
+            borderRadius: 4,
             paddingHorizontal: 20,
             paddingVertical: 16,
+            fontFamily: fonts.sans,
             fontSize: 16,
             color: colors.text,
             marginBottom: 12,
@@ -230,9 +235,10 @@ export default function LoginScreen() {
             backgroundColor: colors.surface,
             borderWidth: 1,
             borderColor: colors.border,
-            borderRadius: 12,
+            borderRadius: 4,
             paddingHorizontal: 20,
             paddingVertical: 16,
+            fontFamily: fonts.sans,
             fontSize: 16,
             color: colors.text,
             marginBottom: 24,
@@ -243,6 +249,7 @@ export default function LoginScreen() {
           <Text
             style={{
               color: colors.error,
+              fontFamily: fonts.sans,
               fontSize: 14,
               textAlign: 'center',
               marginBottom: 16,
@@ -258,7 +265,7 @@ export default function LoginScreen() {
           style={{
             backgroundColor: colors.accent,
             paddingVertical: 18,
-            borderRadius: 12,
+            borderRadius: 4,
             alignItems: 'center',
             marginBottom: 16,
             opacity: loading ? 0.7 : 1,
@@ -270,9 +277,9 @@ export default function LoginScreen() {
             <Text
               style={{
                 color: '#ffffff',
-                fontSize: 16,
-                fontWeight: '600',
-                letterSpacing: 1,
+                fontFamily: fonts.sansSemiBold,
+                fontSize: 15,
+                letterSpacing: 0.5,
               }}
             >
               {mode === 'login' ? 'Sign In' : 'Create Account'}
@@ -281,9 +288,9 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={toggleMode} style={{ alignItems: 'center' }}>
-          <Text style={{ color: colors.textMuted, fontSize: 14 }}>
+          <Text style={{ color: colors.textMuted, fontFamily: fonts.sans, fontSize: 14 }}>
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-            <Text style={{ color: colors.accent, fontWeight: '600' }}>
+            <Text style={{ color: colors.accent, fontFamily: fonts.sansSemiBold }}>
               {mode === 'login' ? 'Sign Up' : 'Sign In'}
             </Text>
           </Text>

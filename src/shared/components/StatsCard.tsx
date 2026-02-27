@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, useColorScheme } from 'react-native';
 import { getColors } from '../lib/colors';
+import { fonts } from '../lib/typography';
 
 interface StatsCardProps {
   title: string;
@@ -19,26 +20,27 @@ export default function StatsCard({ title, value, subtitle, accent }: StatsCardP
       style={{
         backgroundColor: colors.surface,
         padding: 24,
-        borderRadius: 12,
+        borderRadius: 4,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.border + '80',
       }}
     >
       <Text
         style={{
-          fontSize: 14,
+          fontFamily: fonts.sansMedium,
+          fontSize: 11,
           color: colors.textMuted,
           textTransform: 'uppercase',
-          letterSpacing: 1,
-          marginBottom: 8,
+          letterSpacing: 2,
+          marginBottom: 10,
         }}
       >
         {title}
       </Text>
       <Text
         style={{
-          fontSize: 48,
-          fontWeight: '300',
+          fontFamily: fonts.serif,
+          fontSize: 44,
           color: accent ? colors.accent : colors.text,
         }}
       >
@@ -47,8 +49,10 @@ export default function StatsCard({ title, value, subtitle, accent }: StatsCardP
       {subtitle && (
         <Text
           style={{
+            fontFamily: fonts.serifItalic,
             fontSize: 14,
             color: colors.textMuted,
+            marginTop: 4,
           }}
         >
           {subtitle}
