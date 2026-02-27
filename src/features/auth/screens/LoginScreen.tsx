@@ -24,6 +24,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [confirmationSent, setConfirmationSent] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -57,14 +58,65 @@ export default function LoginScreen() {
     if (result.error) {
       setError(result.error);
     } else if (mode === 'signup') {
-      setError('');
+      setConfirmationSent(true);
     }
   };
 
   const toggleMode = () => {
     setMode((m) => (m === 'login' ? 'signup' : 'login'));
     setError('');
+    setConfirmationSent(false);
   };
+
+  if (confirmationSent) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.bg, justifyContent: 'center', paddingHorizontal: 32 }}>
+        <Text style={{ fontSize: 56, textAlign: 'center', marginBottom: 24 }}>✉️</Text>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: '300',
+            color: colors.text,
+            textAlign: 'center',
+            letterSpacing: 1,
+            marginBottom: 12,
+          }}
+        >
+          Check Your Email
+        </Text>
+        <Text
+          style={{
+            fontSize: 16,
+            color: colors.textMuted,
+            textAlign: 'center',
+            lineHeight: 24,
+            marginBottom: 40,
+          }}
+        >
+          We sent a confirmation link to{'\n'}
+          <Text style={{ color: colors.text, fontWeight: '600' }}>{email}</Text>
+          {'\n\n'}Open the link to activate your account.
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            setConfirmationSent(false);
+            setMode('login');
+            setPassword('');
+          }}
+          style={{
+            backgroundColor: colors.accent,
+            paddingVertical: 18,
+            borderRadius: 12,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600', letterSpacing: 1 }}>
+            Back to Sign In
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView

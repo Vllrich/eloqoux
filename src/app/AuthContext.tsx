@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
+import * as Linking from 'expo-linking';
 import { supabase } from '../shared/lib/supabase';
 import { Profile } from '../shared/types';
 
@@ -66,7 +67,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    const handleDeepLink = async (url: string) => {
+      const hashIndex = url.indexOf('#');
+      if (hashIndex === -1) return;
+      const params = new URLSearchParams(url.substring(hashIndex + 1));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      if (accessToken && refreshToken) {
+        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      }
+    };
+
+    Linking.getInitialURL().then((url) => {
+      if (url) handleDeepLink(url);
+    });
+    const linkingSub = Linking.addEventListener('url', ({ url }) => handleDeepLink(url));
+
+    return () => {
+      subscription.unsubscribe();
+      linkingSub.remove();
+    };
   }, []);
 
   async function fetchProfile(user: User): Promise<Profile | null> {
@@ -99,7 +119,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function signUp(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const redirectUrl = Linking.createURL('/');
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: redirectUrl },
+    });
     return { error: error?.message ?? null };
   }
 
