@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, useColorScheme } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { getColors } from '../lib/colors';
-import { getCurrentWeekStats, getWordHistory, getUserPreferences } from '../lib/storage';
-import { Category } from '../types';
+import { getCurrentWeekStats, getWordHistory, getUserPreferences, getStreak, getMilestones, checkMilestones } from '../lib/storage';
+import { Category, StreakData, Milestone } from '../types';
 import StatsCard from '../components/StatsCard';
 
 export default function OverviewScreen() {
@@ -14,21 +14,31 @@ export default function OverviewScreen() {
   const isFocused = useIsFocused();
   const [weeklyCount, setWeeklyCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [streak, setStreakData] = useState<StreakData>({ currentStreak: 0, longestStreak: 0, lastActiveDate: '' });
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [categoryBreakdown, setCategoryBreakdown] = useState<Record<string, number>>({});
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
   const loadStats = useCallback(async () => {
-    const weekStats = await getCurrentWeekStats();
-    const history = await getWordHistory();
-    const prefs = await getUserPreferences();
+    const [weekStats, history, prefs, streakData] = await Promise.all([
+      getCurrentWeekStats(),
+      getWordHistory(),
+      getUserPreferences(),
+      getStreak(),
+    ]);
+
+    await checkMilestones();
 
     setWeeklyCount(weekStats?.wordCount || 0);
-    setTotalCount(history.length);
-    
-    // Calculate category breakdown from all history
+    setTotalCount(history.filter((w) => !w.isSkipped).length);
+    setStreakData(streakData);
+
+    const saved = await getMilestones();
+    setMilestones(saved);
+
     const breakdown: Record<string, number> = {};
     history.forEach((word) => {
-      breakdown[word.category] = (breakdown[word.category] || 0) + 1;
+      if (!word.isSkipped) breakdown[word.category] = (breakdown[word.category] || 0) + 1;
     });
     setCategoryBreakdown(breakdown);
     setSelectedCategories(prefs?.selectedCategories || []);
@@ -47,7 +57,6 @@ export default function OverviewScreen() {
           paddingBottom: 100,
         }}
       >
-        {/* Title */}
         <Text
           style={{
             fontSize: 32,
@@ -70,9 +79,43 @@ export default function OverviewScreen() {
           Your learning progress
         </Text>
 
-        {/* Stats Cards */}
         <View style={{ gap: 16 }}>
-          {/* This Week */}
+          {/* Streak */}
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              padding: 24,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <View>
+              <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+                Current Streak
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+                <Text style={{ fontSize: 48, fontWeight: '300', color: colors.accent }}>
+                  {streak.currentStreak}
+                </Text>
+                <Text style={{ fontSize: 16, color: colors.textMuted }}>days</Text>
+              </View>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+                Best
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+                <Text style={{ fontSize: 32, fontWeight: '300', color: colors.text }}>
+                  {streak.longestStreak}
+                </Text>
+                <Text style={{ fontSize: 14, color: colors.textMuted }}>days</Text>
+              </View>
+            </View>
+          </View>
+
           <StatsCard
             title="This Week"
             value={weeklyCount}
@@ -80,12 +123,54 @@ export default function OverviewScreen() {
             accent={true}
           />
 
-          {/* Total */}
           <StatsCard
             title="Total"
             value={totalCount}
             subtitle="words in history"
           />
+
+          {/* Milestones */}
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              padding: 24,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}
+          >
+            <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+              Milestones
+            </Text>
+            <View style={{ gap: 14 }}>
+              {milestones.map((m) => {
+                const value = m.type === 'words' ? totalCount : streak.currentStreak;
+                const progress = Math.min(value / m.threshold, 1);
+                return (
+                  <View key={m.id}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <Text style={{ fontSize: 14, color: m.achieved ? colors.accent : colors.text, fontWeight: m.achieved ? '600' : '400' }}>
+                        {m.achieved ? '✓ ' : ''}{m.title}
+                      </Text>
+                      <Text style={{ fontSize: 12, color: colors.textMuted }}>
+                        {Math.min(value, m.threshold)}/{m.threshold} {m.type === 'words' ? 'words' : 'days'}
+                      </Text>
+                    </View>
+                    <View style={{ height: 6, backgroundColor: colors.border, borderRadius: 3 }}>
+                      <View
+                        style={{
+                          height: 6,
+                          borderRadius: 3,
+                          backgroundColor: m.achieved ? colors.accent : colors.textMuted,
+                          width: `${progress * 100}%`,
+                        }}
+                      />
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
 
           {/* Category Breakdown */}
           <View

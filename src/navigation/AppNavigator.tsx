@@ -5,14 +5,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../lib/colors';
 
-// Screens (to be created)
 import DailyWordScreen from '../screens/DailyWordScreen';
 import HistoryScreen from '../screens/HistoryScreen';
+import QuizScreen from '../screens/QuizScreen';
 import OverviewScreen from '../screens/OverviewScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 export type RootTabParamList = {
   History: undefined;
+  Quiz: undefined;
   DailyWord: undefined;
   Overview: undefined;
   Settings: undefined;
@@ -28,6 +29,7 @@ export default function AppNavigator() {
 
   return (
     <Tab.Navigator
+      initialRouteName="DailyWord"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -41,7 +43,7 @@ export default function AppNavigator() {
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: '500',
           marginTop: 4,
         },
@@ -51,8 +53,17 @@ export default function AppNavigator() {
         name="History"
         component={HistoryScreen}
         options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons name="book-outline" size={24} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="book-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Quiz"
+        component={QuizScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="school-outline" size={22} color={color} />
           ),
         }}
       />
@@ -61,8 +72,8 @@ export default function AppNavigator() {
         component={DailyWordScreen}
         options={{
           tabBarLabel: 'Today',
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons name="chatbox-outline" size={24} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="chatbox-outline" size={22} color={color} />
           ),
         }}
       />
@@ -70,8 +81,8 @@ export default function AppNavigator() {
         name="Overview"
         component={OverviewScreen}
         options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons name="stats-chart-outline" size={24} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="stats-chart-outline" size={22} color={color} />
           ),
         }}
       />
@@ -79,8 +90,8 @@ export default function AppNavigator() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons name="settings-outline" size={24} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings-outline" size={22} color={color} />
           ),
         }}
       />

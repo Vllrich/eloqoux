@@ -13,16 +13,22 @@ export interface WordData {
     sentence: string;
     context: string;
   }>;
+  synonyms: string[];
+  antonyms: string[];
+  etymology: string;
 }
 
 export async function generateWord(category: string): Promise<WordData> {
   const prompt = `Generate an eloquent, sophisticated word from the "${category}" category. 
 Return the response in TOON format with this structure:
-word{term,category,definition,examples[3]{sentence,context}}
+word{term,category,definition,etymology,synonyms[3],antonyms[2],examples[3]{sentence,context}}
 
 The word should be:
 - Advanced vocabulary suitable for eloquent speech
 - Specific to the ${category} domain
+- Include a brief etymology (origin of the word, e.g. "From Latin eloquens, meaning speaking out")
+- Include 2-3 synonyms
+- Include 1-2 antonyms
 - Include 2 example sentences where the word is used naturally
 - Each example should have context describing the situation
 
@@ -60,6 +66,9 @@ Return ONLY the TOON formatted data, nothing else.`;
       term: wordData.term,
       category: wordData.category,
       definition: wordData.definition,
+      etymology: wordData.etymology || "",
+      synonyms: Array.isArray(wordData.synonyms) ? wordData.synonyms : [],
+      antonyms: Array.isArray(wordData.antonyms) ? wordData.antonyms : [],
       examples: wordData.examples.map((ex: any) => ({
         sentence: ex.sentence,
         context: ex.context || "",

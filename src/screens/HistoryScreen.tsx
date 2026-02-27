@@ -4,14 +4,16 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  TextInput,
   useColorScheme,
   Modal,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { getColors } from '../lib/colors';
 import { Word } from '../types';
-import { getWordHistory } from '../lib/storage';
+import { getWordHistory, toggleFavorite, searchWordHistory } from '../lib/storage';
 import WordCard from '../components/WordCard';
 import ExampleSentence from '../components/ExampleSentence';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +26,8 @@ export default function HistoryScreen() {
   const isFocused = useIsFocused();
   const [history, setHistory] = useState<Word[]>([]);
   const [selectedWord, setSelectedWord] = useState<Word | null>(null);
+  const [filter, setFilter] = useState<'all' | 'favorites'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadHistory = useCallback(async () => {
     const data = await getWordHistory();
@@ -34,15 +38,27 @@ export default function HistoryScreen() {
     if (isFocused) loadHistory();
   }, [isFocused, loadHistory]);
 
+  const filteredHistory = (() => {
+    let list = history.filter((w) => !w.isSkipped);
+    if (filter === 'favorites') list = list.filter((w) => w.isFavorite);
+    if (searchQuery.trim().length >= 2) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(
+        (w) =>
+          w.term.toLowerCase().includes(q) ||
+          w.definition.toLowerCase().includes(q) ||
+          w.examples.some((ex) => ex.sentence.toLowerCase().includes(q))
+      );
+    }
+    return list;
+  })();
+
   const handleDeleteHistory = () => {
     Alert.alert(
       'Delete History',
       'Are you sure you want to delete all history? This cannot be undone.',
       [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
+        { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete',
           style: 'destructive',
@@ -54,6 +70,14 @@ export default function HistoryScreen() {
         },
       ]
     );
+  };
+
+  const handleToggleFavorite = async (wordId: string) => {
+    await toggleFavorite(wordId);
+    await loadHistory();
+    if (selectedWord?.id === wordId) {
+      setSelectedWord((prev) => prev ? { ...prev, isFavorite: !prev.isFavorite } : null);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -105,23 +129,81 @@ export default function HistoryScreen() {
           style={{
             fontSize: 16,
             color: colors.textMuted,
-            marginBottom: 32,
+            marginBottom: 16,
           }}
         >
-          {history.length} words learned
+          {filteredHistory.length} words {filter === 'favorites' ? 'favorited' : 'learned'}
         </Text>
 
+        {/* Search Bar */}
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: colors.border,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+            marginBottom: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Ionicons name="search-outline" size={18} color={colors.textMuted} />
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search words..."
+            placeholderTextColor={colors.textMuted}
+            style={{ flex: 1, fontSize: 15, color: colors.text, padding: 0 }}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Filter Tabs */}
+        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 24 }}>
+          {(['all', 'favorites'] as const).map((f) => (
+            <TouchableOpacity
+              key={f}
+              onPress={() => setFilter(f)}
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                borderRadius: 20,
+                backgroundColor: filter === f ? colors.accent : colors.surface,
+                borderWidth: 1,
+                borderColor: filter === f ? colors.accent : colors.border,
+              }}
+            >
+              <Text style={{ fontSize: 13, fontWeight: '600', color: filter === f ? '#ffffff' : colors.text }}>
+                {f === 'all' ? 'All' : 'Favorites'}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
         {/* History List */}
-        {history.length === 0 ? (
+        {filteredHistory.length === 0 ? (
           <View style={{ alignItems: 'center', marginTop: 80 }}>
-            <Text style={{ fontSize: 48, marginBottom: 16 }}>📚</Text>
+            <Text style={{ fontSize: 48, marginBottom: 16 }}>{filter === 'favorites' ? '❤️' : '📚'}</Text>
             <Text style={{ fontSize: 16, color: colors.textMuted, textAlign: 'center' }}>
-              No words yet.{'\n'}Start learning to build your history.
+              {filter === 'favorites'
+                ? 'No favorites yet.\nTap the heart on words you love.'
+                : searchQuery.length >= 2
+                  ? `No results for "${searchQuery}"`
+                  : 'No words yet.\nStart learning to build your history.'}
             </Text>
           </View>
         ) : (
           <View style={{ gap: 12 }}>
-            {history.map((word) => (
+            {filteredHistory.map((word) => (
               <TouchableOpacity
                 key={word.id}
                 onPress={() => setSelectedWord(word)}
@@ -135,42 +217,20 @@ export default function HistoryScreen() {
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: 24,
-                        fontWeight: '500',
-                        color: colors.text,
-                        marginBottom: 4,
-                      }}
-                    >
-                      {word.term}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.textMuted,
-                        marginBottom: 8,
-                      }}
-                    >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <Text style={{ fontSize: 24, fontWeight: '500', color: colors.text }}>
+                        {word.term}
+                      </Text>
+                      {word.isFavorite && <Ionicons name="heart" size={16} color="#e74c3c" />}
+                    </View>
+                    <Text style={{ fontSize: 14, color: colors.textMuted, marginBottom: 8 }}>
                       {word.category}
                     </Text>
-                    <Text
-                      numberOfLines={2}
-                      style={{
-                        fontSize: 14,
-                        color: colors.textMuted,
-                      }}
-                    >
+                    <Text numberOfLines={2} style={{ fontSize: 14, color: colors.textMuted }}>
                       {word.definition}
                     </Text>
                   </View>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: colors.textMuted,
-                      marginLeft: 12,
-                    }}
-                  >
+                  <Text style={{ fontSize: 12, color: colors.textMuted, marginLeft: 12 }}>
                     {formatDate(word.dateViewed)}
                   </Text>
                 </View>
@@ -196,7 +256,10 @@ export default function HistoryScreen() {
           >
             {selectedWord && (
               <>
-                <WordCard word={selectedWord} />
+                <WordCard
+                  word={selectedWord}
+                  onToggleFavorite={() => handleToggleFavorite(selectedWord.id)}
+                />
 
                 <View style={{ marginTop: 40 }}>
                   <Text
@@ -224,7 +287,6 @@ export default function HistoryScreen() {
             )}
           </ScrollView>
 
-          {/* Close Button */}
           <View
             style={{
               position: 'absolute',
