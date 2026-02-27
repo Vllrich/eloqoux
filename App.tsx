@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import "./global.css";
 import { getColors } from "./src/lib/colors";
 import { isOnboarded } from "./src/lib/storage";
+import ErrorBoundary from "./src/components/ErrorBoundary";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import CategorySelectionScreen from "./src/screens/CategorySelectionScreen";
 import AppNavigator from "./src/navigation/AppNavigator";
@@ -43,30 +44,36 @@ export default function App() {
 
   if (onboarding === "welcome") {
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <WelcomeScreen onContinue={handleWelcomeContinue} />
-        <StatusBar style={isDark ? "light" : "dark"} />
-      </GestureHandlerRootView>
+      <ErrorBoundary>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <WelcomeScreen onContinue={handleWelcomeContinue} />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </GestureHandlerRootView>
+      </ErrorBoundary>
     );
   }
 
   if (onboarding === "categories") {
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <CategorySelectionScreen onComplete={handleCategoriesComplete} />
-        <StatusBar style={isDark ? "light" : "dark"} />
-      </GestureHandlerRootView>
+      <ErrorBoundary>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <CategorySelectionScreen onComplete={handleCategoriesComplete} />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </GestureHandlerRootView>
+      </ErrorBoundary>
     );
   }
 
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
-        <StatusBar style={isDark ? "light" : "dark"} />
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <NavigationContainer>
+            <AppNavigator />
+          </NavigationContainer>
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }

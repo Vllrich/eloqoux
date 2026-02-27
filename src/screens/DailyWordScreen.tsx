@@ -31,9 +31,7 @@ import {
 import WordCard from "../components/WordCard";
 import ExampleSentence from "../components/ExampleSentence";
 
-const SUPABASE_URL =
-  process.env.EXPO_PUBLIC_SUPABASE_URL ||
-  "https://dfjvpyggkmzpdhlbhanl.supabase.co";
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;

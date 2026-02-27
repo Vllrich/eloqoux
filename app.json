@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "eloquox",
+    "name": "Eloquox",
     "slug": "eloquox",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,16 +8,13 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-logo-dark.svg",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#fafaf6",
-      "dark": {
-        "image": "./assets/splash-logo-bright.svg",
-        "backgroundColor": "#121212"
-      }
+      "backgroundColor": "#fafaf6"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eloquox.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,10 +22,28 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.eloquox.app",
+      "permissions": [
+        "NOTIFICATIONS",
+        "VIBRATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    },
+    "plugins": [
+      "expo-notifications"
+    ]
   }
 }
