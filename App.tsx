@@ -7,22 +7,29 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import "./global.css";
 import { getColors } from "./src/lib/colors";
 import { isOnboarded } from "./src/lib/storage";
+import { AuthProvider, useAuth } from "./src/lib/AuthContext";
 import ErrorBoundary from "./src/components/ErrorBoundary";
+import LoginScreen from "./src/screens/LoginScreen";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import CategorySelectionScreen from "./src/screens/CategorySelectionScreen";
 import AppNavigator from "./src/navigation/AppNavigator";
 
-export default function App() {
+function AppContent() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === "dark";
   const colors = getColors(isDark);
+  const { session, loading: authLoading } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [onboarding, setOnboarding] = useState<"welcome" | "categories" | "complete">("welcome");
 
   useEffect(() => {
-    checkOnboarding();
-  }, []);
+    if (!authLoading && session) {
+      checkOnboarding();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [authLoading, session]);
 
   const checkOnboarding = async () => {
     const isComplete = await isOnboarded();
@@ -30,50 +37,55 @@ export default function App() {
     setLoading(false);
   };
 
-  const handleWelcomeContinue = () => {
-    setOnboarding("categories");
-  };
-
-  const handleCategoriesComplete = () => {
-    setOnboarding("complete");
-  };
-
-  if (loading) {
+  if (authLoading || loading) {
     return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
+  }
+
+  if (!session) {
+    return (
+      <>
+        <LoginScreen />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
+    );
   }
 
   if (onboarding === "welcome") {
     return (
-      <ErrorBoundary>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <WelcomeScreen onContinue={handleWelcomeContinue} />
-          <StatusBar style={isDark ? "light" : "dark"} />
-        </GestureHandlerRootView>
-      </ErrorBoundary>
+      <>
+        <WelcomeScreen onContinue={() => setOnboarding("categories")} />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
     );
   }
 
   if (onboarding === "categories") {
     return (
-      <ErrorBoundary>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <CategorySelectionScreen onComplete={handleCategoriesComplete} />
-          <StatusBar style={isDark ? "light" : "dark"} />
-        </GestureHandlerRootView>
-      </ErrorBoundary>
+      <>
+        <CategorySelectionScreen onComplete={() => setOnboarding("complete")} />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
     );
   }
 
   return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+      <StatusBar style={isDark ? "light" : "dark"} />
+    </SafeAreaProvider>
+  );
+}
+
+export default function App() {
+  return (
     <ErrorBoundary>
-      <SafeAreaProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <NavigationContainer>
-            <AppNavigator />
-          </NavigationContainer>
-          <StatusBar style={isDark ? "light" : "dark"} />
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </GestureHandlerRootView>
     </ErrorBoundary>
   );
 }

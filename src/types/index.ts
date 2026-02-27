@@ -59,6 +59,15 @@ export interface QuizCard {
   interval: number;
 }
 
+export interface Profile {
+  id: string;
+  email: string;
+  trial_ends_at: string;
+  is_subscribed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export type MilestoneType = 'words' | 'streak';
 
 export interface Milestone {

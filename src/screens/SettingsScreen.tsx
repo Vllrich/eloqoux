@@ -11,6 +11,7 @@ import {
 import * as Notifications from 'expo-notifications';
 import { getColors } from '../lib/colors';
 import { getUserPreferences, saveUserPreferences, clearAllData } from '../lib/storage';
+import { useAuth } from '../lib/AuthContext';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -32,6 +33,7 @@ export default function SettingsScreen() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
+  const { user, profile, trialActive, trialDaysLeft, signOut } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [notifHour, setNotifHour] = useState(9);
@@ -185,6 +187,49 @@ export default function SettingsScreen() {
           )}
         </View>
 
+        {/* Account */}
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: colors.border,
+            padding: 20,
+            marginBottom: 16,
+          }}
+        >
+          <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+            Account
+          </Text>
+          <Text style={{ fontSize: 16, color: colors.text, marginBottom: 8 }}>
+            {user?.email}
+          </Text>
+          <View
+            style={{
+              backgroundColor: trialActive ? (profile?.is_subscribed ? '#27ae6020' : colors.accent + '20') : '#e74c3c20',
+              paddingVertical: 8,
+              paddingHorizontal: 14,
+              borderRadius: 8,
+              alignSelf: 'flex-start',
+              marginBottom: 4,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: trialActive ? (profile?.is_subscribed ? '#27ae60' : colors.accent) : '#e74c3c',
+              }}
+            >
+              {profile?.is_subscribed
+                ? 'Subscribed'
+                : trialActive
+                  ? `Trial — ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left`
+                  : 'Trial expired'}
+            </Text>
+          </View>
+        </View>
+
         {/* Danger Zone */}
         <View
           style={{
@@ -193,7 +238,7 @@ export default function SettingsScreen() {
             borderWidth: 1,
             borderColor: colors.border,
             padding: 20,
-            marginTop: 24,
+            marginTop: 8,
           }}
         >
           <Text style={{ fontSize: 14, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
@@ -208,10 +253,31 @@ export default function SettingsScreen() {
               alignItems: 'center',
               borderWidth: 1,
               borderColor: '#e74c3c',
+              marginBottom: 12,
             }}
           >
             <Text style={{ color: '#e74c3c', fontSize: 14, fontWeight: '600' }}>
               Clear All Data
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert('Sign Out', 'Are you sure?', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Sign Out', onPress: signOut },
+              ])
+            }
+            style={{
+              backgroundColor: colors.bg,
+              paddingVertical: 14,
+              borderRadius: 8,
+              alignItems: 'center',
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}
+          >
+            <Text style={{ color: colors.text, fontSize: 14, fontWeight: '600' }}>
+              Sign Out
             </Text>
           </TouchableOpacity>
         </View>
