@@ -8,6 +8,7 @@ import {
   useColorScheme,
   Alert,
   Dimensions,
+  Modal,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -19,6 +20,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getColors } from "../../../shared/lib/colors";
 import { Word, WordExample } from "../../../shared/types";
 import {
@@ -31,6 +33,8 @@ import {
 import { generateWord, generateExamples } from "../../../services/api";
 import WordCard from "../../../shared/components/WordCard";
 import ExampleSentence from "../../../shared/components/ExampleSentence";
+import Toast from "../../../shared/components/Toast";
+import SkeletonCard from "../../../shared/components/SkeletonCard";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
@@ -39,11 +43,15 @@ export default function DailyWordScreen() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === "dark";
   const colors = getColors(isDark);
+  const insets = useSafeAreaInsets();
 
   const [word, setWord] = useState<Word | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [showExplainer, setShowExplainer] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [showTopicPicker, setShowTopicPicker] = useState(false);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
 
   const translateX = useSharedValue(0);
   const cardOpacity = useSharedValue(1);
@@ -63,7 +71,7 @@ export default function DailyWordScreen() {
     setShowExplainer(false);
   };
 
-  const fetchNewWord = async () => {
+  const fetchNewWord = useCallback(async () => {
     setLoading(true);
     try {
       const prefs = await getUserPreferences();
@@ -85,7 +93,7 @@ export default function DailyWordScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const loadMoreExamples = async () => {
     if (!word) return;
@@ -104,16 +112,22 @@ export default function DailyWordScreen() {
     }
   };
 
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type });
+  };
+
   const handleNext = useCallback(async () => {
     if (word) await saveWordToHistory(word);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    showToast("Word saved", "success");
     fetchNewWord();
-  }, [word]);
+  }, [word, fetchNewWord]);
 
   const handleSkip = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    showToast("Skipped", "info");
     fetchNewWord();
-  }, []);
+  }, [fetchNewWord]);
 
   const handleToggleFavorite = async () => {
     if (!word) return;
@@ -124,27 +138,23 @@ export default function DailyWordScreen() {
   const handleChangeTopic = async () => {
     const prefs = await getUserPreferences();
     if (!prefs) return;
-    Alert.alert(
-      "Change Topic",
-      "Select a category",
-      prefs.selectedCategories.map((cat) => ({
-        text: cat,
-        onPress: async () => {
-          setLoading(true);
-          try {
-            const newWord = await generateWord(cat);
-            setWord(newWord);
-            translateX.value = 0;
-            cardOpacity.value = 1;
-          } catch {
-            Alert.alert("Error", "Failed to load word");
-          } finally {
-            setLoading(false);
-          }
-        },
-      })),
-      { cancelable: true }
-    );
+    setAvailableCategories(prefs.selectedCategories);
+    setShowTopicPicker(true);
+  };
+
+  const selectTopic = async (cat: string) => {
+    setShowTopicPicker(false);
+    setLoading(true);
+    try {
+      const newWord = await generateWord(cat);
+      setWord(newWord);
+      translateX.value = 0;
+      cardOpacity.value = 1;
+    } catch {
+      Alert.alert("Error", "Failed to load word");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const swipeGesture = Gesture.Pan()
@@ -184,19 +194,24 @@ export default function DailyWordScreen() {
 
   if (loading && !word) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={colors.accent} />
-        <Text style={{ color: colors.textMuted, marginTop: 16, fontSize: 16 }}>Loading word...</Text>
+      <View style={{ flex: 1, backgroundColor: colors.bg, paddingTop: insets.top + 16, paddingHorizontal: 24 }}>
+        <SkeletonCard />
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <Toast
+        message={toast?.message || ""}
+        visible={!!toast}
+        type={toast?.type}
+        onHide={() => setToast(null)}
+      />
       <Animated.View
         style={[
           saveIndicatorStyle,
-          { position: "absolute", top: 80, right: 24, zIndex: 10, backgroundColor: "#2ecc71", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
+          { position: "absolute", top: insets.top + 20, right: 24, zIndex: 10, backgroundColor: colors.success, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
         ]}
       >
         <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>SAVE</Text>
@@ -204,7 +219,7 @@ export default function DailyWordScreen() {
       <Animated.View
         style={[
           skipIndicatorStyle,
-          { position: "absolute", top: 80, left: 24, zIndex: 10, backgroundColor: "#e74c3c", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
+          { position: "absolute", top: insets.top + 20, left: 24, zIndex: 10, backgroundColor: colors.error, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
         ]}
       >
         <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>SKIP</Text>
@@ -214,7 +229,7 @@ export default function DailyWordScreen() {
         <Animated.View style={[{ flex: 1 }, animatedCardStyle]}>
           <ScrollView
             contentContainerStyle={{
-              paddingTop: 60,
+              paddingTop: insets.top + 16,
               paddingHorizontal: 24,
               paddingBottom: 140,
             }}
@@ -286,12 +301,15 @@ export default function DailyWordScreen() {
           borderTopWidth: 1,
           borderTopColor: colors.border,
           paddingHorizontal: 24,
-          paddingVertical: 20,
+          paddingTop: 16,
+          paddingBottom: insets.bottom + 16,
         }}
       >
         <View style={{ flexDirection: "row", gap: 12 }}>
           <TouchableOpacity
             onPress={handleSkip}
+            accessibilityRole="button"
+            accessibilityLabel="Skip this word"
             style={{
               flex: 1,
               backgroundColor: colors.surface,
@@ -307,6 +325,8 @@ export default function DailyWordScreen() {
 
           <TouchableOpacity
             onPress={handleNext}
+            accessibilityRole="button"
+            accessibilityLabel="Save this word"
             style={{
               flex: 1,
               backgroundColor: colors.accent,
@@ -320,6 +340,8 @@ export default function DailyWordScreen() {
 
           <TouchableOpacity
             onPress={handleChangeTopic}
+            accessibilityRole="button"
+            accessibilityLabel="Change topic category"
             style={{
               flex: 1,
               backgroundColor: colors.surface,
@@ -355,11 +377,11 @@ export default function DailyWordScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", gap: 40, marginBottom: 40 }}>
               <View style={{ alignItems: "center" }}>
                 <Text style={{ fontSize: 40 }}>👈</Text>
-                <Text style={{ color: "#e74c3c", fontSize: 18, fontWeight: "700", marginTop: 8 }}>Skip</Text>
+                <Text style={{ color: colors.error, fontSize: 18, fontWeight: "700", marginTop: 8 }}>Skip</Text>
               </View>
               <View style={{ alignItems: "center" }}>
                 <Text style={{ fontSize: 40 }}>👉</Text>
-                <Text style={{ color: "#2ecc71", fontSize: 18, fontWeight: "700", marginTop: 8 }}>Save</Text>
+                <Text style={{ color: colors.success, fontSize: 18, fontWeight: "700", marginTop: 8 }}>Save</Text>
               </View>
             </View>
             <Text style={{ color: "#fff", fontSize: 16, textAlign: "center", lineHeight: 24, marginBottom: 32 }}>
@@ -369,6 +391,57 @@ export default function DailyWordScreen() {
           </View>
         </TouchableOpacity>
       )}
+
+      <Modal
+        visible={showTopicPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowTopicPicker(false)}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => setShowTopicPicker(false)}
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" }}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {}}
+            style={{
+              backgroundColor: colors.surface,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              paddingTop: 12,
+              paddingBottom: insets.bottom + 16,
+              paddingHorizontal: 24,
+            }}
+          >
+            <View style={{ width: 36, height: 4, backgroundColor: colors.border, borderRadius: 2, alignSelf: "center", marginBottom: 20 }} />
+            <Text style={{ fontSize: 20, fontWeight: "600", color: colors.text, marginBottom: 20 }}>
+              Change Topic
+            </Text>
+            {availableCategories.map((cat) => (
+              <TouchableOpacity
+                key={cat}
+                onPress={() => selectTopic(cat)}
+                accessibilityRole="button"
+                style={{
+                  paddingVertical: 16,
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.border,
+                }}
+              >
+                <Text style={{ fontSize: 16, color: colors.text }}>{cat}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              onPress={() => setShowTopicPicker(false)}
+              style={{ marginTop: 16, paddingVertical: 14, alignItems: "center" }}
+            >
+              <Text style={{ fontSize: 16, color: colors.textMuted, fontWeight: "600" }}>Cancel</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }

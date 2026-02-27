@@ -1,13 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   useColorScheme,
-  Animated,
 } from "react-native";
+import ReAnimated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolate,
+} from "react-native-reanimated";
 import { useIsFocused } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getColors } from "../../../shared/lib/colors";
 import { QuizCard } from "../../../shared/types";
 import { getDueQuizCards, updateQuizCard } from "../../../services/storage";
@@ -16,13 +22,14 @@ export default function QuizScreen() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === "dark";
   const colors = getColors(isDark);
+  const insets = useSafeAreaInsets();
   const isFocused = useIsFocused();
 
   const [cards, setCards] = useState<QuizCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [completed, setCompleted] = useState(0);
-  const flipAnim = useRef(new Animated.Value(0)).current;
+  const flipProgress = useSharedValue(0);
 
   const loadCards = useCallback(async () => {
     const due = await getDueQuizCards();
@@ -30,7 +37,7 @@ export default function QuizScreen() {
     setCurrentIndex(0);
     setRevealed(false);
     setCompleted(0);
-    flipAnim.setValue(0);
+    flipProgress.value = 0;
   }, []);
 
   useEffect(() => {
@@ -42,12 +49,7 @@ export default function QuizScreen() {
   const handleReveal = () => {
     setRevealed(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Animated.spring(flipAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      tension: 50,
-      friction: 8,
-    }).start();
+    flipProgress.value = withSpring(1, { damping: 15, stiffness: 100 });
   };
 
   const handleAnswer = async (correct: boolean) => {
@@ -61,7 +63,7 @@ export default function QuizScreen() {
 
     setCompleted((c) => c + 1);
     setRevealed(false);
-    flipAnim.setValue(0);
+    flipProgress.value = 0;
 
     if (currentIndex + 1 < cards.length) {
       setCurrentIndex((i) => i + 1);
@@ -70,15 +72,21 @@ export default function QuizScreen() {
     }
   };
 
-  const frontOpacity = flipAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [1, 0, 0],
-  });
+  const frontAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { perspective: 1000 },
+      { rotateY: `${interpolate(flipProgress.value, [0, 1], [0, 180])}deg` },
+    ],
+    backfaceVisibility: 'hidden' as const,
+  }));
 
-  const backOpacity = flipAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [0, 0, 1],
-  });
+  const backAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { perspective: 1000 },
+      { rotateY: `${interpolate(flipProgress.value, [0, 1], [180, 360])}deg` },
+    ],
+    backfaceVisibility: 'hidden' as const,
+  }));
 
   if (cards.length === 0) {
     return (
@@ -149,7 +157,7 @@ export default function QuizScreen() {
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <View
         style={{
-          paddingTop: 60,
+          paddingTop: insets.top + 16,
           paddingHorizontal: 24,
           flex: 1,
         }}
@@ -169,130 +177,150 @@ export default function QuizScreen() {
           style={{
             fontSize: 14,
             color: colors.textMuted,
-            marginBottom: 32,
+            marginBottom: 12,
           }}
         >
           {currentIndex + 1} of {cards.length} · {completed} reviewed
         </Text>
+        <View style={{ height: 4, backgroundColor: colors.border, borderRadius: 2, marginBottom: 24 }}>
+          <View
+            style={{
+              height: 4,
+              borderRadius: 2,
+              backgroundColor: colors.accent,
+              width: `${((currentIndex + (revealed ? 0.5 : 0)) / cards.length) * 100}%`,
+            }}
+          />
+        </View>
 
         <View style={{ flex: 1, justifyContent: "center", marginBottom: 120 }}>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={!revealed ? handleReveal : undefined}
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: colors.border,
-              padding: 32,
-              minHeight: 280,
-              justifyContent: "center",
-            }}
-          >
-            <Animated.View style={{ opacity: frontOpacity }}>
-              {!revealed && (
-                <>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: colors.textMuted,
-                      textTransform: "uppercase",
-                      letterSpacing: 1,
-                      marginBottom: 16,
-                    }}
-                  >
-                    {currentCard.category}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 40,
-                      fontWeight: "300",
-                      color: colors.text,
-                      textAlign: "center",
-                      marginBottom: 24,
-                    }}
-                  >
-                    {currentCard.term}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.textMuted,
-                      textAlign: "center",
-                    }}
-                  >
-                    Tap to reveal definition
-                  </Text>
-                </>
-              )}
-            </Animated.View>
-
-            <Animated.View
-              style={{
-                opacity: backOpacity,
-                position: revealed ? "relative" : "absolute",
-                top: revealed ? undefined : 32,
-                left: revealed ? undefined : 32,
-                right: revealed ? undefined : 32,
-              }}
+          <View style={{ minHeight: 280 }}>
+            <ReAnimated.View
+              style={[
+                frontAnimatedStyle,
+                {
+                  backgroundColor: colors.surface,
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  padding: 32,
+                  minHeight: 280,
+                  justifyContent: "center",
+                },
+              ]}
             >
-              {revealed && (
-                <>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={!revealed ? handleReveal : undefined}
+                accessibilityRole="button"
+                accessibilityLabel={`${currentCard.term}. Tap to reveal definition`}
+                style={{ flex: 1, justifyContent: "center" }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: colors.textMuted,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    marginBottom: 16,
+                  }}
+                >
+                  {currentCard.category}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 40,
+                    fontWeight: "300",
+                    color: colors.text,
+                    textAlign: "center",
+                    marginBottom: 24,
+                  }}
+                >
+                  {currentCard.term}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: colors.textMuted,
+                    textAlign: "center",
+                  }}
+                >
+                  Tap to reveal definition
+                </Text>
+              </TouchableOpacity>
+            </ReAnimated.View>
+
+            <ReAnimated.View
+              style={[
+                backAnimatedStyle,
+                {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  backgroundColor: colors.surface,
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  padding: 32,
+                  minHeight: 280,
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: colors.textMuted,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  marginBottom: 16,
+                }}
+              >
+                {currentCard.category}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 32,
+                  fontWeight: "300",
+                  color: colors.text,
+                  marginBottom: 16,
+                }}
+              >
+                {currentCard.term}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: colors.textMuted,
+                  lineHeight: 28,
+                  marginBottom: 20,
+                }}
+              >
+                {currentCard.definition}
+              </Text>
+              {currentCard.examples[0] && (
+                <View
+                  style={{
+                    backgroundColor: colors.bg,
+                    padding: 16,
+                    borderRadius: 10,
+                  }}
+                >
                   <Text
                     style={{
-                      fontSize: 12,
-                      color: colors.textMuted,
-                      textTransform: "uppercase",
-                      letterSpacing: 1,
-                      marginBottom: 16,
-                    }}
-                  >
-                    {currentCard.category}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 32,
-                      fontWeight: "300",
+                      fontSize: 15,
                       color: colors.text,
-                      marginBottom: 16,
+                      lineHeight: 24,
+                      fontStyle: "italic",
                     }}
                   >
-                    {currentCard.term}
+                    "{currentCard.examples[0].sentence}"
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: colors.textMuted,
-                      lineHeight: 28,
-                      marginBottom: 20,
-                    }}
-                  >
-                    {currentCard.definition}
-                  </Text>
-                  {currentCard.examples[0] && (
-                    <View
-                      style={{
-                        backgroundColor: colors.bg,
-                        padding: 16,
-                        borderRadius: 10,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 15,
-                          color: colors.text,
-                          lineHeight: 24,
-                          fontStyle: "italic",
-                        }}
-                      >
-                        "{currentCard.examples[0].sentence}"
-                      </Text>
-                    </View>
-                  )}
-                </>
+                </View>
               )}
-            </Animated.View>
-          </TouchableOpacity>
+            </ReAnimated.View>
+          </View>
         </View>
       </View>
 
@@ -307,12 +335,15 @@ export default function QuizScreen() {
             borderTopWidth: 1,
             borderTopColor: colors.border,
             paddingHorizontal: 24,
-            paddingVertical: 20,
+            paddingTop: 16,
+            paddingBottom: insets.bottom + 16,
           }}
         >
           <View style={{ flexDirection: "row", gap: 12 }}>
             <TouchableOpacity
               onPress={() => handleAnswer(false)}
+              accessibilityRole="button"
+              accessibilityLabel="Review again, mark as incorrect"
               style={{
                 flex: 1,
                 backgroundColor: colors.surface,
@@ -320,11 +351,11 @@ export default function QuizScreen() {
                 borderRadius: 8,
                 alignItems: "center",
                 borderWidth: 1,
-                borderColor: "#e74c3c",
+                borderColor: colors.error,
               }}
             >
               <Text
-                style={{ color: "#e74c3c", fontSize: 14, fontWeight: "600" }}
+                style={{ color: colors.error, fontSize: 14, fontWeight: "600" }}
               >
                 Review Again
               </Text>
@@ -332,6 +363,8 @@ export default function QuizScreen() {
 
             <TouchableOpacity
               onPress={() => handleAnswer(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Got it, mark as correct"
               style={{
                 flex: 1,
                 backgroundColor: colors.accent,

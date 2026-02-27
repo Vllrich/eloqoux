@@ -6,6 +6,11 @@ export const colors = {
     textMuted: '#444444',
     border: '#e6e6e0',
     accent: '#2f6fed',
+    error: '#d63031',
+    success: '#00b894',
+    warning: '#fdcb6e',
+    errorBg: '#d6303118',
+    successBg: '#00b89418',
   },
   dark: {
     bg: '#121212',
@@ -14,6 +19,11 @@ export const colors = {
     textMuted: '#b8b8b8',
     border: '#2a2a2a',
     accent: '#d9b827',
+    error: '#ff6b6b',
+    success: '#51cf66',
+    warning: '#ffd43b',
+    errorBg: '#ff6b6b18',
+    successBg: '#51cf6618',
   },
 };
 

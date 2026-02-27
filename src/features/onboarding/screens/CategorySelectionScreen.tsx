@@ -7,6 +7,7 @@ import {
   useColorScheme,
   Alert,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
 import { Category } from '../../../shared/types';
 import { saveUserPreferences } from '../../../services/storage';
@@ -31,7 +32,8 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
-  
+  const insets = useSafeAreaInsets();
+
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
   const toggleCategory = (category: Category) => {
@@ -67,7 +69,7 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView
         contentContainerStyle={{
-          paddingTop: 80,
+          paddingTop: insets.top + 32,
           paddingHorizontal: 24,
           paddingBottom: 140,
         }}
@@ -136,8 +138,8 @@ export default function CategorySelectionScreen({ onComplete }: CategorySelectio
           borderTopWidth: 1,
           borderTopColor: colors.border,
           paddingHorizontal: 24,
-          paddingVertical: 20,
-          paddingBottom: 40,
+          paddingTop: 16,
+          paddingBottom: insets.bottom + 16,
         }}
       >
         <Text

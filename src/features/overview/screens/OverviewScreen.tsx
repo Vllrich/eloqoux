@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, useColorScheme } from 'react-native';
+import { View, Text, ScrollView, useColorScheme, RefreshControl } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
 import { getCurrentWeekStats, getWordHistory, getUserPreferences, getStreak, getMilestones, checkMilestones } from '../../../services/storage';
 import { Category, StreakData, Milestone } from '../../../shared/types';
@@ -10,8 +11,10 @@ export default function OverviewScreen() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
+  const insets = useSafeAreaInsets();
 
   const isFocused = useIsFocused();
+  const [refreshing, setRefreshing] = useState(false);
   const [weeklyCount, setWeeklyCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [streak, setStreakData] = useState<StreakData>({ currentStreak: 0, longestStreak: 0, lastActiveDate: '' });
@@ -44,6 +47,12 @@ export default function OverviewScreen() {
     setSelectedCategories(prefs?.selectedCategories || []);
   }, []);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadStats();
+    setRefreshing(false);
+  }, [loadStats]);
+
   useEffect(() => {
     if (isFocused) loadStats();
   }, [isFocused, loadStats]);
@@ -52,10 +61,18 @@ export default function OverviewScreen() {
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView
         contentContainerStyle={{
-          paddingTop: 60,
+          paddingTop: insets.top + 16,
           paddingHorizontal: 24,
           paddingBottom: 100,
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+            colors={[colors.accent]}
+          />
+        }
       >
         <Text
           style={{

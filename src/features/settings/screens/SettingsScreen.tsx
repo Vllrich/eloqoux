@@ -9,6 +9,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getColors } from '../../../shared/lib/colors';
 import { getUserPreferences, saveUserPreferences, clearAllData } from '../../../services/storage';
 import { useAuth } from '../../../app/AuthContext';
@@ -35,6 +36,7 @@ export default function SettingsScreen() {
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
+  const insets = useSafeAreaInsets();
   const { user, profile, trialActive, trialDaysLeft, signOut } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -126,7 +128,7 @@ export default function SettingsScreen() {
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView
         contentContainerStyle={{
-          paddingTop: 60,
+          paddingTop: insets.top + 16,
           paddingHorizontal: 24,
           paddingBottom: 100,
         }}
@@ -206,7 +208,7 @@ export default function SettingsScreen() {
           </Text>
           <View
             style={{
-              backgroundColor: trialActive ? (profile?.is_subscribed ? '#27ae6020' : colors.accent + '20') : '#e74c3c20',
+              backgroundColor: trialActive ? (profile?.is_subscribed ? colors.successBg : colors.accent + '20') : colors.errorBg,
               paddingVertical: 8,
               paddingHorizontal: 14,
               borderRadius: 8,
@@ -218,7 +220,7 @@ export default function SettingsScreen() {
               style={{
                 fontSize: 13,
                 fontWeight: '600',
-                color: trialActive ? (profile?.is_subscribed ? '#27ae60' : colors.accent) : '#e74c3c',
+                color: trialActive ? (profile?.is_subscribed ? colors.success : colors.accent) : colors.error,
               }}
             >
               {profile?.is_subscribed
@@ -251,11 +253,11 @@ export default function SettingsScreen() {
               borderRadius: 8,
               alignItems: 'center',
               borderWidth: 1,
-              borderColor: '#e74c3c',
+              borderColor: colors.error,
               marginBottom: 12,
             }}
           >
-            <Text style={{ color: '#e74c3c', fontSize: 14, fontWeight: '600' }}>
+            <Text style={{ color: colors.error, fontSize: 14, fontWeight: '600' }}>
               Clear All Data
             </Text>
           </TouchableOpacity>

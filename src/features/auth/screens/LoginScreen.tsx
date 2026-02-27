@@ -147,7 +147,7 @@ export default function LoginScreen() {
         {error ? (
           <Text
             style={{
-              color: '#e74c3c',
+              color: colors.error,
               fontSize: 14,
               textAlign: 'center',
               marginBottom: 16,

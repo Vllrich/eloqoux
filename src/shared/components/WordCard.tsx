@@ -47,11 +47,11 @@ export default function WordCard({ word, onToggleFavorite, showFavorite = true }
           </Text>
         </View>
         {showFavorite && onToggleFavorite && (
-          <TouchableOpacity onPress={onToggleFavorite} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
+          <TouchableOpacity onPress={onToggleFavorite} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} accessibilityRole="button" accessibilityLabel={word.isFavorite ? 'Remove from favorites' : 'Add to favorites'}>
             <Ionicons
               name={word.isFavorite ? 'heart' : 'heart-outline'}
               size={24}
-              color={word.isFavorite ? '#e74c3c' : colors.textMuted}
+              color={word.isFavorite ? colors.error : colors.textMuted}
             />
           </TouchableOpacity>
         )}
@@ -70,7 +70,7 @@ export default function WordCard({ word, onToggleFavorite, showFavorite = true }
         >
           {word.term}
         </Text>
-        <TouchableOpacity onPress={handleSpeak} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+        <TouchableOpacity onPress={handleSpeak} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={`Pronounce ${word.term}`}>
           <Ionicons name="volume-high-outline" size={28} color={colors.accent} />
         </TouchableOpacity>
       </View>
