@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, useColorScheme } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { getColors } from '../lib/colors';
 import { getCurrentWeekStats, getWordHistory, getUserPreferences } from '../lib/storage';
 import { Category } from '../types';
@@ -10,16 +11,13 @@ export default function OverviewScreen() {
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
 
+  const isFocused = useIsFocused();
   const [weeklyCount, setWeeklyCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [categoryBreakdown, setCategoryBreakdown] = useState<Record<string, number>>({});
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     const weekStats = await getCurrentWeekStats();
     const history = await getWordHistory();
     const prefs = await getUserPreferences();
@@ -34,7 +32,11 @@ export default function OverviewScreen() {
     });
     setCategoryBreakdown(breakdown);
     setSelectedCategories(prefs?.selectedCategories || []);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isFocused) loadStats();
+  }, [isFocused, loadStats]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>

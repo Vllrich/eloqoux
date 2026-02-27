@@ -28,10 +28,38 @@ export default function DailyWordScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
-    loadNewWord();
+    fetchNewWord();
   }, []);
 
-  const loadNewWord = async () => {
+  const fetchWord = async (category: string): Promise<Word> => {
+    const response = await fetch(
+      `${SUPABASE_URL}/functions/v1/generate-word`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to generate word");
+    }
+
+    const data = await response.json();
+    return {
+      id: Date.now().toString(),
+      term: data.term,
+      category: data.category,
+      definition: data.definition,
+      examples: data.examples.map((ex: WordExample, idx: number) => ({
+        ...ex,
+        _key: `${data.term}-${idx}-${Date.now()}`,
+      })),
+      dateViewed: new Date().toISOString(),
+    };
+  };
+
+  const fetchNewWord = async () => {
     setLoading(true);
     try {
       const prefs = await getUserPreferences();
@@ -40,40 +68,13 @@ export default function DailyWordScreen() {
         return;
       }
 
-      // Pick random category from user's selections
       const category =
         prefs.selectedCategories[
           Math.floor(Math.random() * prefs.selectedCategories.length)
         ];
 
-      const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/generate-word`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to generate word");
-      }
-
-      const data = await response.json();
-      const newWord: Word = {
-        id: Date.now().toString(),
-        term: data.term,
-        category: data.category,
-        definition: data.definition,
-        examples: data.examples.map((ex: WordExample, idx: number) => ({
-          ...ex,
-          _key: `${data.term}-${idx}-${Date.now()}`,
-        })),
-        dateViewed: new Date().toISOString(),
-      };
-
+      const newWord = await fetchWord(category);
       setWord(newWord);
-      await saveWordToHistory(newWord);
     } catch (error) {
       console.error("Error loading word:", error);
       Alert.alert(
@@ -124,16 +125,15 @@ export default function DailyWordScreen() {
     }
   };
 
-  const handleNext = () => {
-    loadNewWord();
+  const handleNext = async () => {
+    if (word) {
+      await saveWordToHistory(word);
+    }
+    fetchNewWord();
   };
 
-  const handleSkip = async () => {
-    if (word) {
-      const skippedWord = { ...word, isSkipped: true as boolean };
-      await saveWordToHistory(skippedWord);
-    }
-    loadNewWord();
+  const handleSkip = () => {
+    fetchNewWord();
   };
 
   const handleChangeTopic = async () => {
@@ -148,32 +148,8 @@ export default function DailyWordScreen() {
         onPress: async () => {
           setLoading(true);
           try {
-            const response = await fetch(
-              `${SUPABASE_URL}/functions/v1/generate-word`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ category: cat }),
-              }
-            );
-
-            if (!response.ok) throw new Error("Failed to generate word");
-
-            const data = await response.json();
-            const newWord: Word = {
-              id: Date.now().toString(),
-              term: data.term,
-              category: data.category,
-              definition: data.definition,
-              examples: data.examples.map((ex: WordExample, idx: number) => ({
-                ...ex,
-                _key: `${data.term}-${idx}-${Date.now()}`,
-              })),
-              dateViewed: new Date().toISOString(),
-            };
-
+            const newWord = await fetchWord(cat);
             setWord(newWord);
-            await saveWordToHistory(newWord);
           } catch (error) {
             Alert.alert("Error", "Failed to load word");
           } finally {

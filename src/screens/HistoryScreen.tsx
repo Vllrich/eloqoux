@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { getColors } from '../lib/colors';
 import { Word } from '../types';
 import { getWordHistory } from '../lib/storage';
@@ -20,17 +21,18 @@ export default function HistoryScreen() {
   const isDark = systemColorScheme === 'dark';
   const colors = getColors(isDark);
 
+  const isFocused = useIsFocused();
   const [history, setHistory] = useState<Word[]>([]);
   const [selectedWord, setSelectedWord] = useState<Word | null>(null);
 
-  useEffect(() => {
-    loadHistory();
-  }, []);
-
-  const loadHistory = async () => {
+  const loadHistory = useCallback(async () => {
     const data = await getWordHistory();
     setHistory(data);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isFocused) loadHistory();
+  }, [isFocused, loadHistory]);
 
   const handleDeleteHistory = () => {
     Alert.alert(
@@ -153,10 +155,10 @@ export default function HistoryScreen() {
                       {word.category}
                     </Text>
                     <Text
+                      numberOfLines={2}
                       style={{
                         fontSize: 14,
                         color: colors.textMuted,
-                        numberOfLines: 2,
                       }}
                     >
                       {word.definition}

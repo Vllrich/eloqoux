@@ -46,11 +46,12 @@ export async function getWordHistory(): Promise<Word[]> {
 export async function saveWordToHistory(word: Word): Promise<void> {
   try {
     const history = await getWordHistory();
-    history.unshift(word); // Add to beginning
+    history.unshift(word);
     await AsyncStorage.setItem(KEYS.WORD_HISTORY, JSON.stringify(history));
     
-    // Update weekly stats
-    await updateWeeklyStats(word);
+    if (!word.isSkipped) {
+      await updateWeeklyStats(word);
+    }
   } catch (error) {
     console.error('Error saving word to history:', error);
     throw error;

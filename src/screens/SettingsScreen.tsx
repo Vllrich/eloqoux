@@ -10,7 +10,7 @@ export default function SettingsScreen() {
   return (
     <ScrollView
       className="flex-1"
-      style={{ backgroundColor: colors.background }}
+      style={{ backgroundColor: colors.bg }}
     >
       <View className="p-6">
         <Text
