@@ -68,6 +68,18 @@ export default function LoginScreen() {
     setConfirmationSent(false);
   };
 
+  const handleConfirmedSignIn = async () => {
+    setLoading(true);
+    setError('');
+    const result = await signIn(email.trim(), password);
+    setLoading(false);
+    if (result.error) {
+      setError(result.error.includes('Email not confirmed')
+        ? 'Email not confirmed yet. Please check your inbox and click the link first.'
+        : result.error);
+    }
+  };
+
   if (confirmationSent) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg, justifyContent: 'center', paddingHorizontal: 32 }}>
@@ -90,28 +102,59 @@ export default function LoginScreen() {
             color: colors.textMuted,
             textAlign: 'center',
             lineHeight: 24,
-            marginBottom: 40,
+            marginBottom: 32,
           }}
         >
           We sent a confirmation link to{'\n'}
           <Text style={{ color: colors.text, fontWeight: '600' }}>{email}</Text>
-          {'\n\n'}Open the link to activate your account.
+          {'\n\n'}Click the link in your email, then come back here.
         </Text>
+
+        {error ? (
+          <Text
+            style={{
+              color: colors.error,
+              fontSize: 14,
+              textAlign: 'center',
+              marginBottom: 16,
+            }}
+          >
+            {error}
+          </Text>
+        ) : null}
+
         <TouchableOpacity
-          onPress={() => {
-            setConfirmationSent(false);
-            setMode('login');
-            setPassword('');
-          }}
+          onPress={handleConfirmedSignIn}
+          disabled={loading}
           style={{
             backgroundColor: colors.accent,
             paddingVertical: 18,
             borderRadius: 12,
             alignItems: 'center',
+            marginBottom: 12,
+            opacity: loading ? 0.7 : 1,
           }}
         >
-          <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600', letterSpacing: 1 }}>
-            Back to Sign In
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600', letterSpacing: 1 }}>
+              I've Confirmed My Email
+            </Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setConfirmationSent(false);
+            setMode('login');
+            setPassword('');
+            setError('');
+          }}
+          style={{ alignItems: 'center', paddingVertical: 12 }}
+        >
+          <Text style={{ color: colors.textMuted, fontSize: 14 }}>
+            Use a different account
           </Text>
         </TouchableOpacity>
       </View>
