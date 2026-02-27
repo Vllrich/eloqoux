@@ -1,0 +1,37 @@
+---
+description: Feature-sliced architecture rules for the Eloquox codebase
+alwaysApply: true
+---
+
+# Architecture Rules
+
+This project uses a feature-sliced architecture. Follow these rules strictly.
+
+## Directory structure
+
+```
+src/
+├── app/           → App shell (AuthContext, AppNavigator, providers)
+├── features/      → Feature slices, each with screens/, components/, hooks/
+├── shared/        → Cross-cutting: components/, lib/, types/
+└── services/      → API layer (api.ts) and storage modules (storage/)
+```
+
+## Import rules
+
+- Screens import from: `shared/`, `services/`, their own feature's `components/` and `hooks/`
+- Features MUST NOT import from other features — extract to `shared/` if needed
+- Always import storage via `services/storage` barrel, never from sub-modules directly
+- All Supabase edge function calls go through `services/api.ts`
+
+## Adding new features
+
+1. Create `src/features/<name>/screens/<Name>Screen.tsx`
+2. Add feature-specific components in `src/features/<name>/components/`
+3. Add feature-specific hooks in `src/features/<name>/hooks/`
+4. Register the screen in `src/app/AppNavigator.tsx`
+
+## Component placement
+
+- Used by 2+ features → `src/shared/components/`
+- Used by 1 feature only → `src/features/<name>/components/`

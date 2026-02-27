@@ -1,0 +1,14 @@
+---
+description: React Native and Expo conventions
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# React Native Conventions
+
+- Use functional components with hooks. No class components (except ErrorBoundary).
+- Use `useColorScheme()` + `getColors(isDark)` for theme-aware styling.
+- Prefer inline `style` objects for one-off styles; use NativeWind classes for reusable patterns.
+- Use `expo-haptics` for tactile feedback on user actions.
+- Use `react-native-reanimated` for gesture-driven animations, not `Animated` from RN core (except simple fades).
+- All screens must handle safe areas via `SafeAreaProvider` or padding.

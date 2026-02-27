@@ -5,14 +5,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "./global.css";
-import { getColors } from "./src/lib/colors";
-import { isOnboarded } from "./src/lib/storage";
-import { AuthProvider, useAuth } from "./src/lib/AuthContext";
-import ErrorBoundary from "./src/components/ErrorBoundary";
-import LoginScreen from "./src/screens/LoginScreen";
-import WelcomeScreen from "./src/screens/WelcomeScreen";
-import CategorySelectionScreen from "./src/screens/CategorySelectionScreen";
-import AppNavigator from "./src/navigation/AppNavigator";
+import { getColors } from "./src/shared/lib/colors";
+import { isOnboarded } from "./src/services/storage";
+import { AuthProvider, useAuth } from "./src/app/AuthContext";
+import ErrorBoundary from "./src/shared/components/ErrorBoundary";
+import LoginScreen from "./src/features/auth/screens/LoginScreen";
+import WelcomeScreen from "./src/features/onboarding/screens/WelcomeScreen";
+import CategorySelectionScreen from "./src/features/onboarding/screens/CategorySelectionScreen";
+import AppNavigator from "./src/app/AppNavigator";
 
 function AppContent() {
   const systemColorScheme = useColorScheme();

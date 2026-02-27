@@ -1,0 +1,13 @@
+---
+description: TypeScript coding standards
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# TypeScript Standards
+
+- Strict mode is enabled. Do not use `// @ts-ignore` or `any` without justification.
+- Define interfaces for component props. Use `type` for unions/aliases, `interface` for object shapes.
+- All shared types live in `src/shared/types/index.ts`.
+- Prefer explicit return types on exported functions.
+- Handle errors with try/catch and `console.error`, never silently swallow errors.
